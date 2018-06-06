@@ -13,7 +13,7 @@ namespace Flyiing_Hiigh
 
         private float animationXOffset;
 
-        public ObjWeapon(Context context, int x, int y) : base(context, "Weapon")
+        public ObjWeapon(Context context, int x, int y) : base(context, "Weapon", 1/15)
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.WeaponStuff.gun.png");            
             setPosition(x, y);

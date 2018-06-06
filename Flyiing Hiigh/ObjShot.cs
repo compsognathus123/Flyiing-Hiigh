@@ -9,7 +9,7 @@ namespace Flyiing_Hiigh
 
         int resID;
 
-        public ObjShot(Context context, int x, int y) : base(context, "Shot")
+        public ObjShot(Context context, int x, int y) : base(context, "Shot", 1/25)
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.WeaponStuff.shot1.png");
             setPosition(x, y);

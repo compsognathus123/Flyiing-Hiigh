@@ -11,7 +11,7 @@ namespace Flyiing_Hiigh
         ObjWeapon weapon;
         private float animationXOffset;
 
-        public ObjPlayer(Context context) : base(context, "ObjPlayer")
+        public ObjPlayer(Context context) : base(context, "ObjPlayer", 1/10)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
             this.setPosition(125,200);

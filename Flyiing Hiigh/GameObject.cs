@@ -23,19 +23,14 @@ namespace Flyiing_Hiigh
         protected float screen_width_proportion;
 
 
-        public GameObject(Context context, String typ)
-        {
-            this.typ = typ;
-            activity = (GameActivity)context;
-        }
-
-        public GameObject(Context context, float screen_width_proportion, String typ)
+        public GameObject(Context context, String typ, float screen_width_proportion)
         {
             this.typ = typ;
             this.screen_width_proportion = screen_width_proportion;
+
             activity = (GameActivity)context;
         }
-
+             
         protected void setResourceID(String resourceID)
         {
             Assembly assembly = GetType().GetTypeInfo().Assembly;
