@@ -14,7 +14,7 @@ namespace Flyiing_Hiigh
         
         Boolean isAggro;
         
-        public EnemyBee(Context context, int x, int y, Boolean aggro) : base(context, "Bee", 1)
+        public EnemyBee(Context context, int x, int y, Boolean aggro) : base(context, "Bee", 1/15, 1)
         {
             this.isAggro = aggro;
 

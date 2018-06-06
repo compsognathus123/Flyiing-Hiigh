@@ -8,7 +8,7 @@ namespace Flyiing_Hiigh
     public class ObjOptions : GameObject
     {
 
-        public ObjOptions(Context context) : base(context, "Options")
+        public ObjOptions(Context context) : base(context, "Options", 1)
         {
         }
 

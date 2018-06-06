@@ -12,7 +12,7 @@ namespace Flyiing_Hiigh
 
         private int rotate_degree;
                 
-        public ObjNut(Context context, int x, int y) : base(context, "Nut")
+        public ObjNut(Context context, int x, int y) : base(context, "Nut", 1/20)
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.walnut.png");
             setPosition(x, y);

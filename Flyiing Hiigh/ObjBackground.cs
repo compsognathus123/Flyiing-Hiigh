@@ -14,7 +14,7 @@ namespace Flyiing_Hiigh
 
         Audiomanager audiomanager;        
 
-        public ObjBackground(Context context, int theme) : base(context, "Background")
+        public ObjBackground(Context context, int theme) : base(context, "Background", 1)
         {
             String resID;
             audiomanager = new Audiomanager();

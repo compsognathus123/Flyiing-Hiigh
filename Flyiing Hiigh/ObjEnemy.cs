@@ -8,7 +8,7 @@ namespace Flyiing_Hiigh
         private int health;
         public int deathAnimation;
 
-        public ObjEnemy(Context context, String typ, int health) : base(context, typ)
+        public ObjEnemy(Context context, String typ, float screen_width_proportion,  int health) : base(context, typ, screen_width_proportion)
         {
             this.health = health;
         }
