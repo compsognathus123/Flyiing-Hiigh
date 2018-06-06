@@ -7,9 +7,6 @@ namespace Flyiing_Hiigh
 {
     class EnemyBee : ObjEnemy
     {
-        public static int initWidth = 95;
-        public static int initHeight = 67;
-
         private int resource_duration;
         private int resID;
 
@@ -20,14 +17,14 @@ namespace Flyiing_Hiigh
         public EnemyBee(Context context, int x, int y, Boolean aggro) : base(context, "Bee", 1)
         {
             this.isAggro = aggro;
-            setResourceID("Flyiing_Hiigh.Resources.Drawable.Bee.bee1.png");
-            resID = 1;
 
-            setRectangle(x, y, x + initWidth, y + initHeight);
+            setResourceID("Flyiing_Hiigh.Resources.Drawable.Bee.bee1.png");
+            setPosition(x, y);
+
+            resID = 1;
 
             xSpeed = -2;
             ySpeed = 0;
-
             updown = 1;            
 
         }

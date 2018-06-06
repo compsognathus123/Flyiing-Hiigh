@@ -16,7 +16,7 @@ namespace Flyiing_Hiigh
         public ObjWeapon(Context context, int x, int y) : base(context, "Weapon")
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.WeaponStuff.gun.png");            
-            setRectangle(x, y, x + initWidth, y + initHeight);
+            setPosition(x, y);
 
             xSpeed = -1;
 
