@@ -7,7 +7,6 @@ namespace Flyiing_Hiigh
 {
     public class ObjBackground : GameObject
     {
-
         SKRect rect1;
         SKRect rect2;
 

@@ -6,16 +6,13 @@ using SkiaSharp.Views.Android;
 namespace Flyiing_Hiigh
 {
     public class ObjEnemySpider : ObjEnemy
-    {
-        public static int initWidth = 128;
-        public static int initHeight = 128;
-        
+    {        
         float midYOnDeath;
 
         public ObjEnemySpider(Context context, int x, int y) : base(context, "Spider", 1)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.spider.png");
-            setRectangle(x, y, x + initWidth, y + initHeight);
+            setPosition(x, y);
 
             xSpeed = -1;
             ySpeed = 1;

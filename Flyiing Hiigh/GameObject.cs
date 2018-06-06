@@ -19,10 +19,20 @@ namespace Flyiing_Hiigh
         protected double xSpeed;
         protected double ySpeed;
 
+        protected float aspect_ratio;
+        protected float screen_width_proportion;
+
 
         public GameObject(Context context, String typ)
         {
             this.typ = typ;
+            activity = (GameActivity)context;
+        }
+
+        public GameObject(Context context, float screen_width_proportion, String typ)
+        {
+            this.typ = typ;
+            this.screen_width_proportion = screen_width_proportion;
             activity = (GameActivity)context;
         }
 
@@ -34,11 +44,22 @@ namespace Flyiing_Hiigh
             {
                 bitmap = SKBitmap.Decode(skStream);
             }
+            aspect_ratio = bitmap.Width / bitmap.Height;
         }
 
-        protected void setRectangle(int x1, int y1, int x2, int y2)
+        protected int getWidth()
         {
-            rect = new SKRect(x1, y1, x2, y2);
+            return (int)(screen_width_proportion * activity.getImageInfo().Width);
+        }
+
+        protected int getHeight()
+        {
+            return (int)(getWidth() * aspect_ratio);
+        }
+
+        protected void setPosition(int x, int y)
+        {
+            rect = new SKRect(x, y, x + getWidth(), y + getHeight());
         }
 
         public SKBitmap getBitmap()

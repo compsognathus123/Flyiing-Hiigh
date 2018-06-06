@@ -15,7 +15,7 @@ namespace Flyiing_Hiigh
         public ObjNut(Context context, int x, int y) : base(context, "Nut")
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.walnut.png");
-            setRectangle(x, y, x + initWidth, y + initHeight);
+            setPosition(x, y);
 
             xSpeed = -2.5;
             ySpeed = xSpeed * (y - activity.getPlayer().getRectangle().MidY)/ activity.getImageInfo().Height - 0.3;

@@ -14,7 +14,7 @@ namespace Flyiing_Hiigh
         public ObjPlayer(Context context) : base(context, "ObjPlayer")
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
-            this.setRectangle(125,200, 300, 375);
+            this.setPosition(125,200);
             this.ySpeed = 0;
                        
         }
