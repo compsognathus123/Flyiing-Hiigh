@@ -19,10 +19,10 @@ namespace Flyiing_Hiigh
                 
         int updown;
 
-        public ObjEnemyBird(Context context) : base(context, "Bird", 1/10, 10)
+        public ObjEnemyBird(Context context) : base(context, "Bird", 0.2f, 10)
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.bird1.png");
-            setPosition(activity.getImageInfo().Width, activity.getImageInfo().Height / 2 - getHeight());
+            setPosition(activity.getImageInfo().Width, (int)(activity.getImageInfo().Height / 2 - getHeight()));
 
             resID = 1;
             xSpeed = -1.5;

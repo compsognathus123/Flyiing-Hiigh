@@ -275,7 +275,8 @@ namespace Flyiing_Hiigh
         {
             time += tick_duration_ms;
 
-            infotext = (int)(time/500) + "m";
+            // infotext = (int)(time/500) + "m";
+           // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
 
             RunOnUiThread(() =>
             {

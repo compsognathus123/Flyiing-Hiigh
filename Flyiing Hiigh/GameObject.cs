@@ -19,8 +19,8 @@ namespace Flyiing_Hiigh
         protected double xSpeed;
         protected double ySpeed;
 
-        protected float aspect_ratio;
-        protected float screen_width_proportion;
+        public float aspect_ratio;
+        public float screen_width_proportion;
 
 
         public GameObject(Context context, String typ, float screen_width_proportion)
@@ -39,22 +39,26 @@ namespace Flyiing_Hiigh
             {
                 bitmap = SKBitmap.Decode(skStream);
             }
-            aspect_ratio = bitmap.Width / bitmap.Height;
+            aspect_ratio = (float)bitmap.Width / (float)bitmap.Height;
         }
 
-        protected int getWidth()
+        public float getWidth()
         {
-            return (int)(screen_width_proportion * activity.getImageInfo().Width);
+            return screen_width_proportion * activity.getImageInfo().Width;
         }
 
-        protected int getHeight()
+        public float getHeight()
         {
-            return (int)(getWidth() * aspect_ratio);
+            return getWidth() / aspect_ratio;
         }
 
         protected void setPosition(int x, int y)
         {
             rect = new SKRect(x, y, x + getWidth(), y + getHeight());
+            if(this is ObjPlayer)
+            {
+                activity.infotext = getWidth() + " " + getHeight() + "  " + activity.getImageInfo().Width;
+            }
         }
 
         public SKBitmap getBitmap()

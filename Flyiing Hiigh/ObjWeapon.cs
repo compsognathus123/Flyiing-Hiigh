@@ -8,12 +8,10 @@ namespace Flyiing_Hiigh
     public class ObjWeapon : GameObject
     {
         private Boolean collected;
-        public static int initHeight = 100;
-        public static int initWidth = 140;
 
         private float animationXOffset;
 
-        public ObjWeapon(Context context, int x, int y) : base(context, "Weapon", 1/15)
+        public ObjWeapon(Context context, int x, int y) : base(context, "Weapon", 0.125f)
         {
             setResourceID("Flyiing_Hiigh.Resources.Drawable.WeaponStuff.gun.png");            
             setPosition(x, y);
@@ -53,7 +51,7 @@ namespace Flyiing_Hiigh
                     
                 }
 
-                rect.Size = new SKSize(initWidth, initHeight);
+                rect.Size = new SKSize(getWidth(), getHeight());
                 rect.Location = activity.getPlayer().getRectangle().Location;
                 rect.Offset(activity.getPlayer().getRectangle().Width/8*5  + animationXOffset, activity.getPlayer().getRectangle().Height/7*4 );
                 

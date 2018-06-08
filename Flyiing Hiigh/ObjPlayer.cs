@@ -11,16 +11,17 @@ namespace Flyiing_Hiigh
         ObjWeapon weapon;
         private float animationXOffset;
 
-        public ObjPlayer(Context context) : base(context, "ObjPlayer", 1/10)
+        public ObjPlayer(Context context) : base(context, "ObjPlayer", 0.125f)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
-            this.setPosition(125,200);
+            this.rect = new SKRect(125, 200, 200, 275);
             this.ySpeed = 0;
                        
         }
 
         public override void move()
         {
+            rect.Size = new SKSize(getWidth(), getHeight());
             rect.Location = new SKPoint(125, rect.Location.Y);
 
             ySpeed += g * activity.getTickDurationMs() * Math.Pow(10, -3);

@@ -9,7 +9,7 @@ namespace Flyiing_Hiigh
     {        
         float midYOnDeath;
 
-        public ObjEnemySpider(Context context, int x, int y) : base(context, "Spider", 1/10, 1)
+        public ObjEnemySpider(Context context, int x, int y) : base(context, "Spider", 0.1125f, 1)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.spider.png");
             setPosition(x, y);
@@ -25,7 +25,7 @@ namespace Flyiing_Hiigh
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
-            SKPaint lineCol = new SKPaint { Color = SKColors.White };
+            SKPaint lineCol = new SKPaint { Color = SKColors.White};
 
             if (isDead())
             {
@@ -41,7 +41,7 @@ namespace Flyiing_Hiigh
             }
             else { 
                 
-                canvas.DrawLine(this.rect.Left + 60, 0, this.rect.Right - 60, this.rect.MidY, lineCol);
+                canvas.DrawLine(this.rect.MidX, 0, this.rect.MidX, this.rect.MidY, lineCol);
                 canvas.DrawBitmap(getBitmap(), getRectangle());
             }
         }
