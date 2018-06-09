@@ -169,7 +169,7 @@ namespace Flyiing_Hiigh
 
 
             canvas.DrawText(infotext, 20, 48, textPaint);
-            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width/10*9, 0, imageInfo.Width, imageInfo.Width / 10));
+            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width*0.93f, 0, imageInfo.Width, imageInfo.Width *0.07f));
 
         }
 
@@ -178,7 +178,7 @@ namespace Flyiing_Hiigh
         {
             if (touchEventArgs.Event.Action == MotionEventActions.Down && !isPaused())
             {
-                if (touchEventArgs.Event.GetX() > imageInfo.Width / 10 * 9 && touchEventArgs.Event.GetY() < imageInfo.Width / 10 )
+                if (touchEventArgs.Event.GetX() > (imageInfo.Width*0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width*0.07f) )
                 {
                     setPause(true);
                 }
@@ -227,7 +227,7 @@ namespace Flyiing_Hiigh
 
             Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
-            endActivityIntent.PutExtra("score", score);
+            endActivityIntent.PutExtra("score", getScore());
             endActivityIntent.PutExtra("death_reason", death_reason);
 
             StartActivity(endActivityIntent);
@@ -281,8 +281,9 @@ namespace Flyiing_Hiigh
         {
             time += tick_duration_ms;
 
-            // infotext = (int)(time/500) + "m";
-           // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
+           infotext = (int)(time/500) + "m";
+            // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
+            if (time % 500 == 499) increaseScore();
 
             RunOnUiThread(() =>
             {
@@ -303,6 +304,11 @@ namespace Flyiing_Hiigh
         public Boolean isPaused()
         {
             return archievedEvents.Contains(gameevent.GAME_PAUSED);
+        }
+
+        public int getScore()
+        {
+            return score;
         }
 
         public void increaseScore()

@@ -6,12 +6,12 @@ namespace Flyiing_Hiigh
 {
     public class ObjPlayer : GameObject
     {
-        double g = -350;
+        double g = -400;
 
         ObjWeapon weapon;
         private float animationXOffset;
 
-        public ObjPlayer(Context context) : base(context, "ObjPlayer", 0.125f)
+        public ObjPlayer(Context context) : base(context, "ObjPlayer", 0.095f)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
             this.rect = new SKRect(125, 200, 200, 275);
@@ -24,7 +24,7 @@ namespace Flyiing_Hiigh
             rect.Size = new SKSize(getWidth(), getHeight());
             rect.Location = new SKPoint(125, rect.Location.Y);
 
-            ySpeed += g * activity.getTickDurationMs() * Math.Pow(10, -3);
+            if ( ySpeed > -500) ySpeed += g * activity.getTickDurationMs() * Math.Pow(10, -3);
             float yOffset = (float)(ySpeed * activity.getTickDurationMs() * Math.Pow(10, -3));
 
             if (animationXOffset > 0)
@@ -54,7 +54,7 @@ namespace Flyiing_Hiigh
         {
             if(rect.Top > 0)
             {
-                ySpeed = 300;
+                ySpeed = 400;
             }
         }
 

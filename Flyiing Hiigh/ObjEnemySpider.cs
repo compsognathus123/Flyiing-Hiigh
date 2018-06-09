@@ -9,7 +9,7 @@ namespace Flyiing_Hiigh
     {        
         float midYOnDeath;
 
-        public ObjEnemySpider(Context context, int x, int y) : base(context, "Spider", 0.1125f, 1)
+        public ObjEnemySpider(Context context, int x, int y) : base(context, "Spider", 0.0725f, 1)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.spider.png");
             setPosition(x, y);
