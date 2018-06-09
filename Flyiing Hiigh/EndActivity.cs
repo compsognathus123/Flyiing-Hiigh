@@ -31,7 +31,7 @@ namespace Flyiing_Hiigh
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.EndScreen);
             
-            score = Intent.Extras.GetInt("score");
+            score = Intent.GetIntExtra("score", 420);
             death_reason = Intent.Extras.GetString("death_reason");
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);

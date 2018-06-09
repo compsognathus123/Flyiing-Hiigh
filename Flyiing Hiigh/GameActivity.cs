@@ -78,6 +78,8 @@ namespace Flyiing_Hiigh
 
             startTimer();
 
+            score = 0;
+
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasView);
             canvasView.PaintSurface += OnCanvasViewPaintSurface;
 
@@ -313,7 +315,7 @@ namespace Flyiing_Hiigh
 
         public void increaseScore()
         {
-            score++;
+            this.score++;
         }
 
         public Timer getTimer()
