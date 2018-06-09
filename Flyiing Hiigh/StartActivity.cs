@@ -15,9 +15,15 @@ namespace Flyiing_Hiigh
     {
 
         private SKBitmap backgroundBitmap;
-        private SKBitmap bgshroomBitmap;
-        private SKBitmap playbuttonBitmap;
+        //private SKBitmap bgshroomBitmap;
+        //private SKBitmap playbuttonBitmap;
         
+        public override void OnBackPressed()
+        {
+            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            StartActivity(startActivityIntent);
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
@@ -35,14 +41,14 @@ namespace Flyiing_Hiigh
 
             Assembly assembly = GetType().GetTypeInfo().Assembly;
 
-            string resourceID = "Flyiing_Hiigh.Resources.Drawable.StartScreen.background.png";
+            string resourceID = "Flyiing_Hiigh.Resources.Drawable.StartScreen.BackgroundName.png";
             using (Stream stream = assembly.GetManifestResourceStream(resourceID))
             using (SKManagedStream skStream = new SKManagedStream(stream))
             {
                 backgroundBitmap = SKBitmap.Decode(skStream);
             }
 
-            string resourceID1 = "Flyiing_Hiigh.Resources.Drawable.StartScreen.buttonplay.png";
+           /* string resourceID1 = "Flyiing_Hiigh.Resources.Drawable.StartScreen.buttonplay.png";
             using (Stream stream = assembly.GetManifestResourceStream(resourceID1))
             using (SKManagedStream skStream = new SKManagedStream(stream))
             {
@@ -54,7 +60,7 @@ namespace Flyiing_Hiigh
             using (SKManagedStream skStream = new SKManagedStream(stream))
             {
                 bgshroomBitmap = SKBitmap.Decode(skStream);
-            }
+            }*/
 
             SKCanvasView canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewStartScreen);
             canvasView.PaintSurface += OnPaintCanvas;
@@ -71,7 +77,7 @@ namespace Flyiing_Hiigh
             canvas.Clear();
 
             canvas.DrawBitmap(backgroundBitmap, new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
-            canvas.DrawBitmap(bgshroomBitmap, new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
+            //canvas.DrawBitmap(bgshroomBitmap, new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
 
             // canvas.DrawBitmap(playbuttonBitmap, new SKRect(imageInfo.Width/2 - 75, imageInfo.Height/2 - 75, imageInfo.Width/2 + 75, imageInfo.Height/2 + 75));
 

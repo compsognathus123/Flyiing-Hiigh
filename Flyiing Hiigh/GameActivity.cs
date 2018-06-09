@@ -55,6 +55,12 @@ namespace Flyiing_Hiigh
 
         private int score;
 
+        public override void OnBackPressed()
+        {
+            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            StartActivity(startActivityIntent);
+        }
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

@@ -17,6 +17,12 @@ namespace Flyiing_Hiigh
         private int score;
         private String death_reason;
 
+        public override void OnBackPressed()
+        {
+            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            StartActivity(startActivityIntent);
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
