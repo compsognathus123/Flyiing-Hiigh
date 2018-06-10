@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Views;
 using SkiaSharp;
 using SkiaSharp.Views.Android;
+using Android.Widget;
 
 
 namespace Flyiing_Hiigh 
@@ -33,6 +34,7 @@ namespace Flyiing_Hiigh
         private double time;
 
         public Boolean muted;
+        private Boolean godmode;
 
         private int theme;
 
@@ -76,6 +78,8 @@ namespace Flyiing_Hiigh
 
             tick_duration_ms = 5;
 
+            godmode = false;
+
             startTimer();
 
             score = 0;
@@ -102,12 +106,12 @@ namespace Flyiing_Hiigh
                 typeface = SKTypeface.FromStream(fontStream);
             }
             
-            Assembly assembly = GetType().GetTypeInfo().Assembly;
+            /*Assembly assembly = GetType().GetTypeInfo().Assembly;
             using (Stream stream = assembly.GetManifestResourceStream("Flyiing_Hiigh.Resources.Drawable.buttonoptions.png"))
             using (SKManagedStream skStream = new SKManagedStream(stream))
             {
                 optionsbutton = SKBitmap.Decode(skStream);
-            }
+            }*/
 
         }
 
@@ -159,53 +163,76 @@ namespace Flyiing_Hiigh
             }
 
 
-            //InfoText
+            //InfoText & heller Button
             SKPaint textPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 TextAlign = SKTextAlign.Left,
                 Typeface = typeface,
-                Color = SKColors.White,
+                Color = 0x7eFFFFFF,
+                TextSize = 48,
+            };
+
+            // Dunkle Striche in Pausebutton
+            SKPaint darkPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Fill,
+                TextAlign = SKTextAlign.Left,
+                Typeface = typeface,
+                Color = 0x7e000000,
                 TextSize = 48
+                
             };
 
 
             canvas.DrawText(infotext, 20, 48, textPaint);
-            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width*0.93f, 0, imageInfo.Width, imageInfo.Width *0.07f));
+            canvas.DrawRect(imageInfo.Width * 0.93f, 0, imageInfo.Width*0.07f, imageInfo.Width * 0.07f,textPaint);
+            canvas.DrawRect(imageInfo.Width * 0.945f, imageInfo.Width * 0.01f, imageInfo.Width*0.015f, imageInfo.Width * 0.05f, darkPaint);
+            canvas.DrawRect(imageInfo.Width * 0.97f, imageInfo.Width * 0.01f, imageInfo.Width * 0.015f, imageInfo.Width * 0.05f, darkPaint);
 
         }
 
 
         private void OnScreenTouched(object sender, View.TouchEventArgs touchEventArgs)
         {
-            if (touchEventArgs.Event.Action == MotionEventActions.Down && !isPaused())
+            if (touchEventArgs.Event.Action == MotionEventActions.Down)
             {
-                if (touchEventArgs.Event.GetX() > (imageInfo.Width*0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width*0.07f) )
+                if (!isPaused())
                 {
-                    setPause(true);
-                }
-                else if ((touchEventArgs.Event.GetX() > imageInfo.Width / 4) || player.getWeapon() == null)
-                {
-                    player.accelerate();
+                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width * 0.07f))
+                    {
+                        setPause(true);
+                    }
+                    else if ((touchEventArgs.Event.GetX() > imageInfo.Width / 4) || player.getWeapon() == null)
+                    {
+                        player.accelerate();
 
+                    }
+                    else
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            int x = (int)player.getWeapon().getRectangle().Right - 15;
+                            int y = (int)player.getWeapon().getRectangle().MidY - 15;
+
+                            gameObjects.Add(new ObjShot(this, x, y));
+
+                            player.getWeapon().performShootingAnimation();
+                            player.performShootingAnimation();
+
+                        });
+                    }
                 }
                 else
                 {
-                    RunOnUiThread(() =>
+                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.438f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
                     {
-                        int x = (int)player.getWeapon().getRectangle().Right - 15;
-                        int y = (int)player.getWeapon().getRectangle().MidY - 15;
-
-                        gameObjects.Add(new ObjShot(this, x, y));
-
-                        player.getWeapon().performShootingAnimation();
-                        player.performShootingAnimation();
-
-                    });
+                        activateGodmode();
+                    }
+                    else {
+                        setPause(false);
+                    }
                 }
-            }else if (touchEventArgs.Event.Action == MotionEventActions.Down && isPaused())
-            {
-                setPause(false);
             }
         }
                
@@ -256,9 +283,11 @@ namespace Flyiing_Hiigh
 
                 if (obj is ObjPlayer)
                 {
-                    foreach (GameObject potentialIntersect in gameObjects)
-                    {
-                        ((ObjPlayer)obj).checkIntersect(potentialIntersect);
+                    if (godmode = false) { 
+                        foreach (GameObject potentialIntersect in gameObjects)
+                        {
+                            ((ObjPlayer)obj).checkIntersect(potentialIntersect);
+                        }
                     }
                 }
 
@@ -313,6 +342,39 @@ namespace Flyiing_Hiigh
         public int getScore()
         {
             return score;
+        }
+
+        public void activateGodmode()
+        {
+
+            LayoutInflater layoutInflater = LayoutInflater.From(this);
+            View view = layoutInflater.Inflate(Resource.Layout.InputDialog, null);
+
+            Android.Support.V7.App.AlertDialog.Builder alertbuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            alertbuilder.SetView(view);
+
+            String code = "";
+
+            var input = view.FindViewById<EditText>(Resource.Id.editText);
+            alertbuilder.SetCancelable(false)
+            .SetPositiveButton("Choose", delegate
+                 {
+                        code = input.Text;
+                        canvasView.Invalidate();
+                  })
+            .SetNegativeButton("Cancel", delegate
+                   {
+                        alertbuilder.Dispose();
+                   });
+             Android.Support.V7.App.AlertDialog dialog = alertbuilder.Create();
+            dialog.Show();
+            if (String.Compare(code, "godmode", true) == 0) setGodmode();
+                        
+        }
+
+        public void setGodmode()
+        {
+            godmode = true;
         }
 
         public void increaseScore()
