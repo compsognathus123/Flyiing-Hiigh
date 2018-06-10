@@ -227,12 +227,14 @@ namespace Flyiing_Hiigh
             background.stopBackgroundMusic();
             timer.Stop();
 
-            Intent endActivityIntent = new Intent(this, typeof(EndActivity));
+            
+                Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
-            endActivityIntent.PutExtra("score", getScore());
-            endActivityIntent.PutExtra("death_reason", death_reason);
+            String scoreText = Convert.ToString(score);
+                endActivityIntent.PutExtra("death_reason", death_reason);
+                endActivityIntent.PutExtra("score", scoreText);
 
-            StartActivity(endActivityIntent);
+                StartActivity(endActivityIntent);
 
         }
 
@@ -355,6 +357,7 @@ namespace Flyiing_Hiigh
                 gameObjects.Remove(obj);
             });
         }
+        
 
         public List<GameObject> getGameObjects()
         {

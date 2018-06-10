@@ -14,7 +14,7 @@ namespace Flyiing_Hiigh
     {
         private SKCanvasView canvasView;
 
-        private int score;
+        private String score;
         private String death_reason;
 
         public override void OnBackPressed()
@@ -31,7 +31,7 @@ namespace Flyiing_Hiigh
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.EndScreen);
             
-            score = Intent.GetIntExtra("score", 420);
+            score = Intent.Extras.GetString("score");
             death_reason = Intent.Extras.GetString("death_reason");
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);

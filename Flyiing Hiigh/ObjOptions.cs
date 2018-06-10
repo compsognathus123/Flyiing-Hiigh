@@ -32,8 +32,12 @@ namespace Flyiing_Hiigh
             SKPaint paint = new SKPaint();
             paint.Color = (SKColor)0x3Fffffff;
 
-            canvas.DrawBitmap(getBitmap(), getRectangle());
-            canvas.DrawRect(0,0,imageInfo.Width,imageInfo.Height, paint);
+            activity.RunOnUiThread(() =>
+            {
+                activity.GetCanvasView().Invalidate();
+                canvas.DrawRect(0, 0, imageInfo.Width, imageInfo.Height, paint);
+                canvas.DrawBitmap(getBitmap(), getRectangle());
+            });
             
         }
     }
