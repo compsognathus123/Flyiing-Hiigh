@@ -8,11 +8,19 @@ using System.IO;
 using SkiaSharp;
 using System.Reflection;
 using SkiaSharp.Views.Android;
+using Android.Preferences;
+using Android.Widget;
+
 namespace Flyiing_Hiigh
 {
     [Activity(MainLauncher = true, ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape, Icon = "@drawable/icon")]
     public class StartActivity : Activity
     {
+        String username;
+        int score;
+        SKCanvasView canvasView;
+
+        ISharedPreferences preferences;
 
         private SKBitmap backgroundBitmap;
         //private SKBitmap bgshroomBitmap;
@@ -33,7 +41,46 @@ namespace Flyiing_Hiigh
 
             SetContentView(Resource.Layout.StartScreen);
 
+            preferences  = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
+
             initializeStartScreen();
+            loadPreferences();
+        }
+
+        private void loadPreferences()
+        {
+            username = preferences.GetString("username", "");
+            score = preferences.GetInt("score", 0);
+
+            if(username == "")
+            {
+                showInputDialog();
+            }
+        }
+
+        private void showInputDialog()
+        {
+            LayoutInflater layoutInflater = LayoutInflater.From(this);
+            View view = layoutInflater.Inflate(Resource.Layout.InputDialog, null);
+
+            Android.Support.V7.App.AlertDialog.Builder alertbuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            alertbuilder.SetView(view);
+
+            var userdata = view.FindViewById<EditText>(Resource.Id.editText);
+            alertbuilder.SetCancelable(false)
+            .SetPositiveButton("Choose", delegate
+            {
+                username = userdata.Text;
+                preferences.Edit().PutString("username", username).Apply();
+                canvasView.Invalidate();
+
+            })
+            .SetNegativeButton("Cancel", delegate
+            {
+                alertbuilder.Dispose();
+            });
+            Android.Support.V7.App.AlertDialog dialog = alertbuilder.Create();
+            dialog.Show();
         }
 
         private void initializeStartScreen()
@@ -62,7 +109,7 @@ namespace Flyiing_Hiigh
                 bgshroomBitmap = SKBitmap.Decode(skStream);
             }*/
 
-            SKCanvasView canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewStartScreen);
+            canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewStartScreen);
             canvasView.PaintSurface += OnPaintCanvas;
             canvasView.Click += startButtonClicked;
         }
@@ -104,6 +151,12 @@ namespace Flyiing_Hiigh
             String text = "tap Screen to start playing...";
 
             canvas.DrawText(text, imageInfo.Width - 20, imageInfo.Height/6*5, textPaint);
+            if(username != "")
+            {
+                textPaint.TextSize = 32;
+                textPaint.Color = SKColors.Black;
+                canvas.DrawText(username, imageInfo.Width - 20, 48, textPaint);
+            }
 
         }
 

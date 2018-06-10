@@ -15,12 +15,13 @@ namespace Flyiing_Hiigh
 
         public void hitByShot()
         {
-            if(health != 0)
+            if(health > 1)
             {
                 health--;
             }
             else
             {
+                health--;
                 onDeath();
                 ySpeed = 0;
                 activity.increaseScore();

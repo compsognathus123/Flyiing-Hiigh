@@ -37,21 +37,24 @@ namespace Flyiing_Hiigh
                 activity.getTimer().Stop();
             }
 
-            spawnWeapon();
-            spawnBees();
-            spawnSpiders();
-            spawnBird();
+            activity.RunOnUiThread(() =>
+            {
+                spawnWeapon();
+                spawnBees();
+                spawnSpiders();
+                spawnBird();
+            });
         }
 
         private void spawnSpiders()
         {
             if (time > SPAWNTIME_SPIDERS && time < SPAWNTIME_BIRD - 2000 && !archievedEvents.Contains(gameevent.SPAWNING_SPIDERS))
             {
-                archievedEvents.Add(gameevent.SPAWNING_SPIDERS);
+                    archievedEvents.Add(gameevent.SPAWNING_SPIDERS);
             }
             else
             {
-                archievedEvents.Remove(gameevent.SPAWNING_SPIDERS);
+                    archievedEvents.Remove(gameevent.SPAWNING_SPIDERS);
             }
 
             if (time > next_spider_spawn_time && archievedEvents.Contains(gameevent.SPAWNING_SPIDERS))
@@ -73,12 +76,10 @@ namespace Flyiing_Hiigh
         {
             if(!archievedEvents.Contains(gameevent.BIRD_SPAWNED) && time > SPAWNTIME_BIRD)
             {
-                archievedEvents.Add(gameevent.BIRD_SPAWNED);
 
-                activity.RunOnUiThread(() =>
-                {                    
-                    activity.getGameObjects().Add(new ObjEnemyBird(activity));                   
-                });
+               
+                    archievedEvents.Add(gameevent.BIRD_SPAWNED);
+                    activity.getGameObjects().Add(new ObjEnemyBird(activity));   
             }
         }
 
@@ -92,10 +93,7 @@ namespace Flyiing_Hiigh
                 int x = activity.getImageInfo().Width;
                 int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 200));
 
-                activity.RunOnUiThread(() =>
-                {
                     activity.getGameObjects().Add(new ObjWeapon(activity, x, y));
-                });
 
             }
         }
@@ -117,10 +115,7 @@ namespace Flyiing_Hiigh
                 int x = activity.getImageInfo().Width;
                 int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 100));
 
-                activity.RunOnUiThread(() =>
-                {
                     activity.getGameObjects().Add(new EnemyBee(activity, x, y, false));
-                });
 
                 next_bee_spawn_time = time + 5000 - (time / (SPAWNTIME_BIRD - 2000) * 4600);
             }

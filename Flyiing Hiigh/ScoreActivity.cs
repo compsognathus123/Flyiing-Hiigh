@@ -10,12 +10,11 @@ using SkiaSharp.Views.Android;
 namespace Flyiing_Hiigh
 {
     [Activity(ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
-    public class EndActivity : Activity
+    public class ScoreActivity : Activity
     {
-        private SKCanvasView canvasView;
 
+        private SKCanvasView canvasView;
         private int score;
-        private String death_reason;
 
         public override void OnBackPressed()
         {
@@ -30,9 +29,6 @@ namespace Flyiing_Hiigh
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.EndScreen);
-            
-            score = Intent.Extras.GetInt("score");
-            death_reason = Intent.Extras.GetString("death_reason");
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);
             canvasView.PaintSurface += OnPaintCanvas;
@@ -81,23 +77,8 @@ namespace Flyiing_Hiigh
                 fontStream.Flush();
                 fontStream.Position = 0;
                 typeface = SKTypeface.FromStream(fontStream);
-            }
-
-            String[] death_quote = { "Gone to a better place...", "Dropped dead!", "You bit the dust.", "Deleted!" , "Erased!", "REKT!" };
-            Random rnd = new Random();
-
-
-            using (var paint = new SKPaint())
-            {
-                paint.TextSize = 64.0f;
-                paint.IsAntialias = true;
-                paint.Color = (SKColor)0xFF000000;
-                paint.IsStroke = false;
-                paint.Typeface = typeface;
-                paint.TextAlign = SKTextAlign.Center;
-
-                canvas.DrawText(death_quote[rnd.Next(0,death_quote.Length - 1)], imageInfo.Width/2, imageInfo.Height/2 - 70, paint);
-            }
+            }        
+           
 
             using (var paint = new SKPaint())
             {
@@ -109,7 +90,6 @@ namespace Flyiing_Hiigh
                 paint.TextAlign = SKTextAlign.Center;
 
                 canvas.DrawText("Cause of death:", imageInfo.Width / 2, imageInfo.Height / 2 + 20, paint);
-                canvas.DrawText("Score: ", imageInfo.Width / 2, imageInfo.Height / 2 + 120, paint);
             }
 
             using (var paint = new SKPaint())
@@ -121,7 +101,6 @@ namespace Flyiing_Hiigh
                 paint.Typeface = typeface;
                 paint.TextAlign = SKTextAlign.Center;
 
-                canvas.DrawText(death_reason, imageInfo.Width / 2, imageInfo.Height / 2 + 72, paint);
                 canvas.DrawText("" + score, imageInfo.Width / 2, imageInfo.Height / 2 + 172, paint);
             }
         }

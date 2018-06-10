@@ -230,9 +230,8 @@ namespace Flyiing_Hiigh
             
                 Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
-            String scoreText = Convert.ToString(score);
                 endActivityIntent.PutExtra("death_reason", death_reason);
-                endActivityIntent.PutExtra("score", scoreText);
+                endActivityIntent.PutExtra("score", score);
 
                 StartActivity(endActivityIntent);
 
@@ -287,7 +286,6 @@ namespace Flyiing_Hiigh
 
            infotext = (int)(time/500) + "m";
             // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
-            if (time % 500 == 499) increaseScore();
 
             RunOnUiThread(() =>
             {
@@ -299,6 +297,8 @@ namespace Flyiing_Hiigh
             moveGameObjects();
 
         }
+
+        
 
         public Boolean isMuted()
         {
