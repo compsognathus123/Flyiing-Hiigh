@@ -1,5 +1,11 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Timers;
+using Android.App;
 using Android.Content;
+using Android.OS;
 using SkiaSharp;
 using SkiaSharp.Views.Android;
 
@@ -26,8 +32,13 @@ namespace Flyiing_Hiigh
             SKPaint paint = new SKPaint();
             paint.Color = (SKColor)0x3Fffffff;
 
-            canvas.DrawRect(0,0,imageInfo.Width,imageInfo.Height, paint);
-            canvas.DrawBitmap(getBitmap(), getRectangle());
+            activity.RunOnUiThread(() =>
+            {
+                activity.GetCanvasView().Invalidate();
+                canvas.DrawRect(0, 0, imageInfo.Width, imageInfo.Height, paint);
+                canvas.DrawBitmap(getBitmap(), getRectangle());
+            });
+            
         }
     }
 }

@@ -55,6 +55,12 @@ namespace Flyiing_Hiigh
 
         private int score;
 
+        public override void OnBackPressed()
+        {
+            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            StartActivity(startActivityIntent);
+        }
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -71,6 +77,8 @@ namespace Flyiing_Hiigh
             tick_duration_ms = 5;
 
             startTimer();
+
+            score = 0;
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasView);
             canvasView.PaintSurface += OnCanvasViewPaintSurface;
@@ -163,7 +171,7 @@ namespace Flyiing_Hiigh
 
 
             canvas.DrawText(infotext, 20, 48, textPaint);
-            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width/10*9, 0, imageInfo.Width, imageInfo.Width / 10));
+            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width*0.93f, 0, imageInfo.Width, imageInfo.Width *0.07f));
 
         }
 
@@ -172,7 +180,7 @@ namespace Flyiing_Hiigh
         {
             if (touchEventArgs.Event.Action == MotionEventActions.Down && !isPaused())
             {
-                if (touchEventArgs.Event.GetX() > imageInfo.Width / 10 * 9 && touchEventArgs.Event.GetY() < imageInfo.Width / 10 )
+                if (touchEventArgs.Event.GetX() > (imageInfo.Width*0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width*0.07f) )
                 {
                     setPause(true);
                 }
@@ -219,12 +227,14 @@ namespace Flyiing_Hiigh
             background.stopBackgroundMusic();
             timer.Stop();
 
-            Intent endActivityIntent = new Intent(this, typeof(EndActivity));
+            
+                Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
-            endActivityIntent.PutExtra("score", score);
-            endActivityIntent.PutExtra("death_reason", death_reason);
+            String scoreText = Convert.ToString(score);
+                endActivityIntent.PutExtra("death_reason", death_reason);
+                endActivityIntent.PutExtra("score", scoreText);
 
-            StartActivity(endActivityIntent);
+                StartActivity(endActivityIntent);
 
         }
 
@@ -275,8 +285,9 @@ namespace Flyiing_Hiigh
         {
             time += tick_duration_ms;
 
-            // infotext = (int)(time/500) + "m";
-           // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
+           infotext = (int)(time/500) + "m";
+            // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
+            if (time % 500 == 499) increaseScore();
 
             RunOnUiThread(() =>
             {
@@ -299,9 +310,14 @@ namespace Flyiing_Hiigh
             return archievedEvents.Contains(gameevent.GAME_PAUSED);
         }
 
+        public int getScore()
+        {
+            return score;
+        }
+
         public void increaseScore()
         {
-            score++;
+            this.score++;
         }
 
         public Timer getTimer()
@@ -341,6 +357,7 @@ namespace Flyiing_Hiigh
                 gameObjects.Remove(obj);
             });
         }
+        
 
         public List<GameObject> getGameObjects()
         {

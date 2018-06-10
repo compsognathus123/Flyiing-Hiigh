@@ -14,8 +14,14 @@ namespace Flyiing_Hiigh
     {
         private SKCanvasView canvasView;
 
-        private int score;
+        private String score;
         private String death_reason;
+
+        public override void OnBackPressed()
+        {
+            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            StartActivity(startActivityIntent);
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -24,8 +30,8 @@ namespace Flyiing_Hiigh
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.EndScreen);
-
-            score = Intent.Extras.GetInt("score");
+            
+            score = Intent.Extras.GetString("score");
             death_reason = Intent.Extras.GetString("death_reason");
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);
@@ -77,7 +83,7 @@ namespace Flyiing_Hiigh
                 typeface = SKTypeface.FromStream(fontStream);
             }
 
-            String[] death_quote = { "Gone to a better place...", "Dropped dead!", "You bit the dust.", "Deleted!" , "Erased!" };
+            String[] death_quote = { "Gone to a better place...", "Dropped dead!", "You bit the dust.", "Deleted!" , "Erased!", "REKT!" };
             Random rnd = new Random();
 
 
@@ -103,7 +109,7 @@ namespace Flyiing_Hiigh
                 paint.TextAlign = SKTextAlign.Center;
 
                 canvas.DrawText("Cause of death:", imageInfo.Width / 2, imageInfo.Height / 2 + 20, paint);
-                canvas.DrawText("Score: " + score, imageInfo.Width / 2, imageInfo.Height / 2 + 120, paint);
+                canvas.DrawText("Score: ", imageInfo.Width / 2, imageInfo.Height / 2 + 120, paint);
             }
 
             using (var paint = new SKPaint())
@@ -115,7 +121,10 @@ namespace Flyiing_Hiigh
                 paint.Typeface = typeface;
                 paint.TextAlign = SKTextAlign.Center;
 
+                String ScoreText = "error";
+                ScoreText = score + " ECTS";
                 canvas.DrawText(death_reason, imageInfo.Width / 2, imageInfo.Height / 2 + 72, paint);
+                canvas.DrawText(ScoreText, imageInfo.Width / 2, imageInfo.Height / 2 + 172, paint);
             }
         }
 
