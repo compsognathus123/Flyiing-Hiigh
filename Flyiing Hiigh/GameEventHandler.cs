@@ -58,7 +58,7 @@ namespace Flyiing_Hiigh
             {
                 Random rnd = new Random();
                 int x = activity.getImageInfo().Width;
-                int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 300));
+                int y = rnd.Next(0, activity.getImageInfo().Height - 300);
 
                 activity.RunOnUiThread(() =>
                 {
@@ -115,7 +115,7 @@ namespace Flyiing_Hiigh
             {
                 Random rnd = new Random();
                 int x = activity.getImageInfo().Width;
-                int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 100));
+                int y = rnd.Next(0, activity.getImageInfo().Height - 100);
 
                 activity.RunOnUiThread(() =>
                 {
