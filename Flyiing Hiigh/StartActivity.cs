@@ -28,7 +28,7 @@ namespace Flyiing_Hiigh
         
         public override void OnBackPressed()
         {
-            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            Intent startActivityIntent = new Intent(this, typeof(ScoreActivity));
             StartActivity(startActivityIntent);
         }
 
@@ -43,8 +43,8 @@ namespace Flyiing_Hiigh
 
             preferences  = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
 
-            initializeStartScreen();
             loadPreferences();
+            initializeStartScreen();
         }
 
         private void loadPreferences()
@@ -94,21 +94,7 @@ namespace Flyiing_Hiigh
             {
                 backgroundBitmap = SKBitmap.Decode(skStream);
             }
-
-           /* string resourceID1 = "Flyiing_Hiigh.Resources.Drawable.StartScreen.buttonplay.png";
-            using (Stream stream = assembly.GetManifestResourceStream(resourceID1))
-            using (SKManagedStream skStream = new SKManagedStream(stream))
-            {
-                playbuttonBitmap = SKBitmap.Decode(skStream);
-            }
-
-            string resourceID2 = "Flyiing_Hiigh.Resources.Drawable.StartScreen.mainbg.png";
-            using (Stream stream = assembly.GetManifestResourceStream(resourceID2))
-            using (SKManagedStream skStream = new SKManagedStream(stream))
-            {
-                bgshroomBitmap = SKBitmap.Decode(skStream);
-            }*/
-
+       
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewStartScreen);
             canvasView.PaintSurface += OnPaintCanvas;
             canvasView.Click += startButtonClicked;
@@ -124,10 +110,6 @@ namespace Flyiing_Hiigh
             canvas.Clear();
 
             canvas.DrawBitmap(backgroundBitmap, new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
-            //canvas.DrawBitmap(bgshroomBitmap, new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
-
-            // canvas.DrawBitmap(playbuttonBitmap, new SKRect(imageInfo.Width/2 - 75, imageInfo.Height/2 - 75, imageInfo.Width/2 + 75, imageInfo.Height/2 + 75));
-
 
             SKTypeface typeface;
             using (var asset = Assets.Open("LittleBird.ttf"))
@@ -164,7 +146,6 @@ namespace Flyiing_Hiigh
         {
             Intent gameActivityIntent = new Intent(this, typeof(GameActivity));
             StartActivity(gameActivityIntent);
-
         }
         
 
