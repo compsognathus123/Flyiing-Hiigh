@@ -7,15 +7,38 @@ using System.IO;
 using SkiaSharp;
 using System.Reflection;
 using SkiaSharp.Views.Android;
+using System.Net;
+using System.Text;
+using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using Android.Widget;
+
 namespace Flyiing_Hiigh
 {
+    [Serializable]
+    public struct UserScore
+    {
+        public int score { get; set; }
+        public string user { get; set; }
+
+        public UserScore(String user, int score)
+        {
+            this.score = score;
+            this.user = user;
+        }
+    }
+
+
     [Activity(ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
     public class ScoreActivity : Activity
     {
+        List<UserScore> scorelist;
 
-        private SKCanvasView canvasView;
-        private int score;
+        ISharedPreferences preferences;
 
+        String myusername;
+        int myscore;
+        
         public override void OnBackPressed()
         {
             Intent startActivityIntent = new Intent(this, typeof(StartActivity));
@@ -28,90 +51,124 @@ namespace Flyiing_Hiigh
 
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
-            SetContentView(Resource.Layout.EndScreen);
 
-            canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);
-            canvasView.PaintSurface += OnPaintCanvas;
-            canvasView.Click += OnCanvasClicked;
+            preferences = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
 
-        }
+            myusername = preferences.GetString("username", "");
+            myscore = preferences.GetInt("score", 0);
 
-        private SKBitmap getBitmapFromID(String res)
-        {
-            Assembly assembly = GetType().GetTypeInfo().Assembly;
-            SKBitmap bitmap;
-            string resourceID = res;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceID))
-            using (SKManagedStream skStream = new SKManagedStream(stream))
-            {
-                bitmap = SKBitmap.Decode(skStream);
-            }
-
-            return bitmap;
-        }
             
-       
-
-        private void OnPaintCanvas(object sender, SKPaintSurfaceEventArgs e)
-        {
-            SKImageInfo imageInfo = e.Info;
-            SKSurface surface = e.Surface;
-            SKCanvas canvas = surface.Canvas;
-
-            canvas.Clear();
-
-            canvas.DrawBitmap(getBitmapFromID("Flyiing_Hiigh.Resources.Drawable.StartScreen.background.png"), new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
-            canvas.DrawBitmap(getBitmapFromID("Flyiing_Hiigh.Resources.Drawable.StartScreen.paper.png"), new SKRect(0, 0, imageInfo.Width, imageInfo.Height));
-
-            drawText(canvas, imageInfo);
-
-        }
-
-        private void drawText(SKCanvas canvas, SKImageInfo imageInfo)
-        {
-            SKTypeface typeface;
-            using (var asset = Assets.Open("LittleBird.ttf"))
+            if (downloadScores())
             {
-                var fontStream = new MemoryStream();
-                asset.CopyTo(fontStream);
-                fontStream.Flush();
-                fontStream.Position = 0;
-                typeface = SKTypeface.FromStream(fontStream);
-            }        
-           
+                UserScore dlScore = scorelist.Find(x => x.user == myusername);
 
-            using (var paint = new SKPaint())
+                UserScore removeScore = scorelist.Find(x => x.user == "test");
+                scorelist.Remove(removeScore);
+
+                if (dlScore.score < myscore)
+                {
+                    scorelist.Remove(dlScore);
+                    dlScore.score = myscore;
+                    scorelist.Add(dlScore);
+                    scorelist.Sort((x, y) => x.score.CompareTo(y.score));
+
+                    uploadScores();
+                }
+            }
+            else
             {
-                paint.TextSize = 48.0f;
-                paint.IsAntialias = true;
-                paint.Color = (SKColor)0xFF000000;
-                paint.IsStroke = false;
-                paint.Typeface = typeface;
-                paint.TextAlign = SKTextAlign.Center;
+                Toast.MakeText(this, "Couldn't connect to server.", ToastLength.Short);
+                OnBackPressed();
 
-                canvas.DrawText("Cause of death:", imageInfo.Width / 2, imageInfo.Height / 2 + 20, paint);
             }
 
-            using (var paint = new SKPaint())
-            {
-                paint.TextSize = 48.0f;
-                paint.IsAntialias = true;
-                paint.Color = (SKColor)0xFFbf0000;
-                paint.IsStroke = false;
-                paint.Typeface = typeface;
-                paint.TextAlign = SKTextAlign.Center;
+            SetContentView(Resource.Layout.ScoreScreen);
+            fillListView();
 
-                canvas.DrawText("" + score, imageInfo.Width / 2, imageInfo.Height / 2 + 172, paint);
-            }
+            
         }
 
-        public void OnCanvasClicked(object sender, EventArgs e)
+        private void fillListView()
         {
-            Intent mainActivityIntent = new Intent(this, typeof(StartActivity));
-            StartActivity(mainActivityIntent);
+            List<String> scores = new List<String>();
+
+
+            foreach (UserScore sc in scorelist)
+            {
+                scores.Add("\t" + sc.score + "\t" +  sc.user);
+              //  scores.Add(String.Format("%-10s  %s", sc.score, sc.user));
+            }
+            scores.Reverse();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, Resource.Layout.ScoreList, scores);
+            ListView listview = FindViewById<ListView>(Resource.Id.listViewScore);
+
+            listview.SetAdapter(adapter);
 
         }
         
+
+        private Boolean uploadScores()
+        {
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://www.maunzy.de/FlyingHigh/user.scores");
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.Credentials = new NetworkCredential("u57015446", "flyinghigh123");
+
+                //Convert scorelist to byte array;
+                var binFormatter = new BinaryFormatter();
+                var mStream = new MemoryStream();
+                binFormatter.Serialize(mStream, scorelist);
+
+                byte[] fileContents;
+                fileContents = mStream.ToArray();
+
+                request.ContentLength = fileContents.Length;
+
+                using (Stream requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(fileContents, 0, fileContents.Length);
+                }
+
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+        private Boolean downloadScores()
+        {
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://www.maunzy.de/FlyingHigh/user.scores");
+                request.Method = WebRequestMethods.Ftp.DownloadFile;
+                request.Credentials = new NetworkCredential("u57015446", "flyinghigh123");
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                Stream responseStream = response.GetResponseStream();
+
+                BinaryFormatter bf = new BinaryFormatter();
+                scorelist = bf.Deserialize(responseStream) as List<UserScore>;
+
+                response.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }          
+
+        }
+
 
     }
 }

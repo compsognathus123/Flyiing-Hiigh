@@ -17,6 +17,10 @@ namespace Flyiing_Hiigh
         private int score;
         private String death_reason;
 
+        Boolean new_highscore;
+
+        ISharedPreferences preferences;
+
         public override void OnBackPressed()
         {
             Intent startActivityIntent = new Intent(this, typeof(StartActivity));
@@ -30,9 +34,18 @@ namespace Flyiing_Hiigh
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.EndScreen);
-            
+
+
             score = Intent.Extras.GetInt("score");
             death_reason = Intent.Extras.GetString("death_reason");
+            
+            preferences = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
+            
+            if (preferences.GetInt("score", 0) < score)
+            {
+                preferences.Edit().PutInt("score", score).Commit();
+                new_highscore = true;
+            }
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewEndScreen);
             canvasView.PaintSurface += OnPaintCanvas;
@@ -109,6 +122,7 @@ namespace Flyiing_Hiigh
                 paint.TextAlign = SKTextAlign.Center;
 
                 canvas.DrawText("Cause of death:", imageInfo.Width / 2, imageInfo.Height / 2 + 20, paint);
+
                 canvas.DrawText("Score: ", imageInfo.Width / 2, imageInfo.Height / 2 + 120, paint);
             }
 
@@ -121,8 +135,15 @@ namespace Flyiing_Hiigh
                 paint.Typeface = typeface;
                 paint.TextAlign = SKTextAlign.Center;
 
+                String scoretext = "";
+                if (new_highscore)
+                {
+                    scoretext = "!NEW HIGHSCORE! ";
+                }
+
                 canvas.DrawText(death_reason, imageInfo.Width / 2, imageInfo.Height / 2 + 72, paint);
-                canvas.DrawText("" + score, imageInfo.Width / 2, imageInfo.Height / 2 + 172, paint);
+                canvas.DrawText(scoretext + score, imageInfo.Width / 2, imageInfo.Height / 2 + 172, paint);
+               
             }
         }
 

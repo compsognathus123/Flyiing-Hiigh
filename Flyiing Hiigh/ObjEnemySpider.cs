@@ -29,7 +29,7 @@ namespace Flyiing_Hiigh
 
             if (isDead())
             {
-                canvas.DrawLine(this.rect.Left + 60, 0, this.rect.Right - 60, midYOnDeath, lineCol);
+                canvas.DrawLine(this.rect.MidX, 0, this.rect.MidX, midYOnDeath, lineCol);
 
                 canvas.RotateDegrees(deathAnimation, rect.MidX, rect.MidY);
                 canvas.DrawBitmap(getBitmap(), getRectangle());
