@@ -102,11 +102,13 @@ namespace Flyiing_Hiigh
         private void fillListView()
         {
             List<String> scores = new List<String>();
+            int rank = 1;
 
             foreach (UserScore sc in scorelist)
             {
-                scores.Add("\t" + sc.score + "\t" +  sc.user);
-              //  scores.Add(String.Format("%-10s  %s", sc.score, sc.user));
+                scores.Add(rank + ".    " + sc.score + "    " +  sc.user);
+                rank++;
+                //  scores.Add(String.Format("%-10s  %s", sc.score, sc.user));
             }
             scores.Reverse();
 

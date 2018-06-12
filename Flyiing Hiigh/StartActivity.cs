@@ -19,14 +19,14 @@ namespace Flyiing_Hiigh
         int score;
         SKCanvasView canvasView;
 
+        SKRect scoreButton;
+
         ISharedPreferences preferences;
 
         private SKBitmap backgroundBitmap;
         
         public override void OnBackPressed()
         {
-            Intent startActivityIntent = new Intent(this, typeof(ScoreActivity));
-            StartActivity(startActivityIntent);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -94,10 +94,25 @@ namespace Flyiing_Hiigh
        
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasViewStartScreen);
             canvasView.PaintSurface += OnPaintCanvas;
-            canvasView.Click += startButtonClicked;
+            canvasView.Touch += OnCanvasTouch;
         }
 
-       
+        private void OnCanvasTouch(object sender, View.TouchEventArgs e)
+        {
+            if (e.Event.Action == MotionEventActions.Down)
+            {
+                if (scoreButton.IntersectsWith(new SKRect(e.Event.GetX() - 5, e.Event.GetY() - 5, e.Event.GetX() + 5, e.Event.GetY() + 5)))
+                {
+                    Intent startActivityIntent = new Intent(this, typeof(ScoreActivity));
+                    StartActivity(startActivityIntent);
+                }
+                else
+                {
+                    Intent gameActivityIntent = new Intent(this, typeof(GameActivity));
+                    StartActivity(gameActivityIntent);
+                }
+            }
+        }
 
         private void OnPaintCanvas(object sender, SKPaintSurfaceEventArgs e)
         {
@@ -126,23 +141,26 @@ namespace Flyiing_Hiigh
                 TextAlign = SKTextAlign.Right,
                 TextSize = 64
             };
+            
+            canvas.DrawText("tap Screen to start playing...", imageInfo.Width - 20, imageInfo.Height/6*5, textPaint);
+                     
 
-            String text = "tap Screen to start playing...";
+            SKPaint rectPaint = new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Black.WithAlpha(100)};
+            SKPaint scorePaint = new SKPaint {Color = SKColors.White, TextAlign = SKTextAlign.Right, TextSize = 32, Typeface = typeface };
 
-            canvas.DrawText(text, imageInfo.Width - 20, imageInfo.Height/6*5, textPaint);
-            if(username != "")
+            scoreButton = new SKRect(imageInfo.Width - scorePaint.MeasureText("Ranking") - 30,10, imageInfo.Width -10, 68);
+
+            canvas.DrawRoundRect(scoreButton, 5,5, rectPaint);
+            canvas.DrawText("Ranking", imageInfo.Width - 20, 48, scorePaint);
+
+            if (username != "")
             {
-                textPaint.TextSize = 32;
-                textPaint.Color = SKColors.Black;
-                canvas.DrawText(username, imageInfo.Width - 20, 48, textPaint);
+                SKPaint usernamePaint = textPaint;
+                usernamePaint.TextSize = 32;
+                usernamePaint.Color = SKColors.Black;
+                canvas.DrawText(username, scoreButton.Left - 20, 48, usernamePaint);
             }
 
-        }
-
-        public void startButtonClicked(object sender, EventArgs e)
-        {
-            Intent gameActivityIntent = new Intent(this, typeof(GameActivity));
-            StartActivity(gameActivityIntent);
         }
         
 
