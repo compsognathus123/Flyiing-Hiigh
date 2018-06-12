@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Views;
 using SkiaSharp;
 using SkiaSharp.Views.Android;
+using Android.Widget;
 
 
 namespace Flyiing_Hiigh 
@@ -28,11 +29,13 @@ namespace Flyiing_Hiigh
     [Activity(Label = "Game", ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
     public class GameActivity : Activity
     {
+        //++++++++++++++++++++Variables+++++++++++++++++++++
         private Timer timer;
         private double tick_duration_ms;
         private double time;
 
         public Boolean muted;
+        public Boolean godmode;
 
         private int theme;
 
@@ -48,13 +51,16 @@ namespace Flyiing_Hiigh
         private ObjBackground background;
         private ObjOptions options;
 
-        SKBitmap optionsbutton;
+        //SKBitmap optionsbutton;
 
         public String infotext = "no Text";
         private SKTypeface typeface;
 
         private int score;
 
+
+
+        //************************************BUTTONS/FRAMEWORK******************************
         public override void OnBackPressed()
         {
             Intent startActivityIntent = new Intent(this, typeof(StartActivity));
@@ -75,6 +81,8 @@ namespace Flyiing_Hiigh
             theme = rnd.Next(0, 4);
 
             tick_duration_ms = 5;
+
+            godmode = false;
 
             startTimer();
 
@@ -102,12 +110,12 @@ namespace Flyiing_Hiigh
                 typeface = SKTypeface.FromStream(fontStream);
             }
             
-            Assembly assembly = GetType().GetTypeInfo().Assembly;
+            /*Assembly assembly = GetType().GetTypeInfo().Assembly;
             using (Stream stream = assembly.GetManifestResourceStream("Flyiing_Hiigh.Resources.Drawable.buttonoptions.png"))
             using (SKManagedStream skStream = new SKManagedStream(stream))
             {
                 optionsbutton = SKBitmap.Decode(skStream);
-            }
+            }*/
 
         }
 
@@ -150,6 +158,8 @@ namespace Flyiing_Hiigh
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
+            
+
             canvas.Clear();
                        
             foreach (GameObject obj in gameObjects)
@@ -159,56 +169,94 @@ namespace Flyiing_Hiigh
             }
 
 
-            //InfoText
+            //InfoText & heller Button
             SKPaint textPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 TextAlign = SKTextAlign.Left,
                 Typeface = typeface,
-                Color = SKColors.White,
+                Color = 0x7eFFFFFF,
+                TextSize = 48,
+            };
+
+            // Dunkle Striche in Pausebutton
+            SKPaint darkPaint = new SKPaint
+            {
+                Style = SKPaintStyle.Fill,
+                TextAlign = SKTextAlign.Left,
+                Typeface = typeface,
+                Color = 0x7e000000,
                 TextSize = 48
+                
             };
 
 
             canvas.DrawText(infotext, 20, 48, textPaint);
-            canvas.DrawBitmap(optionsbutton, new SKRect(imageInfo.Width*0.93f, 0, imageInfo.Width, imageInfo.Width *0.07f));
+            canvas.DrawRect(imageInfo.Width * 0.93f, 0, imageInfo.Width*0.07f, imageInfo.Width * 0.07f,textPaint);
+            canvas.DrawRect(imageInfo.Width * 0.945f, imageInfo.Width * 0.01f, imageInfo.Width*0.015f, imageInfo.Width * 0.05f, darkPaint);
+            canvas.DrawRect(imageInfo.Width * 0.97f, imageInfo.Width * 0.01f, imageInfo.Width * 0.015f, imageInfo.Width * 0.05f, darkPaint);
 
         }
 
+
+        //>>>>>>>>>>>>>>>>>>>>>>TOUCHEVENTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         private void OnScreenTouched(object sender, View.TouchEventArgs touchEventArgs)
         {
-            if (touchEventArgs.Event.Action == MotionEventActions.Down && !isPaused())
+            if (touchEventArgs.Event.Action == MotionEventActions.Down)
             {
-                if (touchEventArgs.Event.GetX() > (imageInfo.Width*0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width*0.07f) )
+                if (!isPaused())
                 {
-                    setPause(true);
-                }
-                else if ((touchEventArgs.Event.GetX() > imageInfo.Width / 4) || player.getWeapon() == null)
-                {
-                    player.accelerate();
+                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width * 0.07f))
+                    {
+                        setPause(true);
+                    }
+                    else if ((touchEventArgs.Event.GetX() > imageInfo.Width / 4) || player.getWeapon() == null)
+                    {
+                        player.accelerate();
 
+                    }
+                    else
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            int x = (int)player.getWeapon().getRectangle().Right - 15;
+                            int y = (int)player.getWeapon().getRectangle().MidY - 15;
+
+                            gameObjects.Add(new ObjShot(this, x, y));
+
+                            player.getWeapon().performShootingAnimation();
+                            player.performShootingAnimation();
+
+                        });
+                    }
                 }
                 else
                 {
-                    RunOnUiThread(() =>
+                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.438f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
                     {
-                        int x = (int)player.getWeapon().getRectangle().Right - 15;
-                        int y = (int)player.getWeapon().getRectangle().MidY - 15;
-
-                        gameObjects.Add(new ObjShot(this, x, y));
-
-                        player.getWeapon().performShootingAnimation();
-                        player.performShootingAnimation();
-
-                    });
+                        activateGodmode();
+                    }else if(touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.5537f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
+                    {
+                        toggleMuted();
+                        if (getMuted()) background.stopBackgroundMusic();
+                        if (!getMuted()) background.startBackgroundMusic();
+                    }
+                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.3719f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.5217f))
+                    {
+                        setPause(false);
+                    }
+                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.6281f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.5217f))
+                    {
+                        OnBackPressed();
+                    }
+                    
                 }
-            }else if (touchEventArgs.Event.Action == MotionEventActions.Down && isPaused())
-            {
-                setPause(false);
             }
         }
                
+        //>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
         public void onPlayerDied(GameObject obj)
         {
@@ -256,9 +304,11 @@ namespace Flyiing_Hiigh
 
                 if (obj is ObjPlayer)
                 {
-                    foreach (GameObject potentialIntersect in gameObjects)
-                    {
-                        ((ObjPlayer)obj).checkIntersect(potentialIntersect);
+                    if (godmode == false) { 
+                        foreach (GameObject potentialIntersect in gameObjects)
+                        {
+                            ((ObjPlayer)obj).checkIntersect(potentialIntersect);
+                        }
                     }
                 }
 
@@ -285,7 +335,8 @@ namespace Flyiing_Hiigh
             time += tick_duration_ms;
 
            infotext = (int)(time/500) + "m";
-            // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
+            if ((time % 5000) == 4999) increaseScore();
+           // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
 
             RunOnUiThread(() =>
             {
@@ -298,7 +349,15 @@ namespace Flyiing_Hiigh
 
         }
 
-        
+        public Boolean getMuted()
+        {
+            return muted;
+        }
+
+        public void toggleMuted()
+        {
+            muted = !getMuted();
+        }
 
         public Boolean isMuted()
         {
@@ -313,6 +372,52 @@ namespace Flyiing_Hiigh
         public int getScore()
         {
             return score;
+        }
+
+        public Boolean getGodmode()
+        {
+            return godmode;
+        }
+
+        public void activateGodmode()
+        {
+
+            LayoutInflater layoutInflater = LayoutInflater.From(this);
+            View view = layoutInflater.Inflate(Resource.Layout.GiftCode, null);
+
+            Android.Support.V7.App.AlertDialog.Builder alertbuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            alertbuilder.SetView(view);
+
+            String code = "";
+
+            var input = view.FindViewById<EditText>(Resource.Id.editText);
+            alertbuilder.SetCancelable(false)
+            .SetPositiveButton("Choose", delegate
+                 {
+                     code = input.Text;
+                     if (code == "godmode") godmode = !godmode;
+                     Console.WriteLine(code + " " + godmode);
+                     canvasView.Invalidate();
+                  })
+            .SetNegativeButton("Cancel", delegate
+                   {
+                        alertbuilder.Dispose();
+                   });
+             Android.Support.V7.App.AlertDialog dialog = alertbuilder.Create();
+            dialog.Show();
+          //  if (String.Compare(code, "godmode", true) == 0) toggleGodmode();
+           // if (code == "godmode") godmode = !godmode;
+            //Console.WriteLine( code + " " + godmode);
+        }
+
+        public void setGodmode(Boolean gm)
+        {
+            godmode = gm;
+        }
+
+        public void toggleGodmode()
+        {
+            setGodmode(!getGodmode());
         }
 
         public void increaseScore()

@@ -10,12 +10,15 @@ namespace Flyiing_Hiigh
         SKRect rect1;
         SKRect rect2;
 
+        int CurrentTheme;
+
         Boolean screen_init;
 
         Audiomanager audiomanager;        
 
         public ObjBackground(Context context, int theme) : base(context, "Background", 1)
         {
+            CurrentTheme = theme;
             String resID;
             audiomanager = new Audiomanager();
 
@@ -93,6 +96,28 @@ namespace Flyiing_Hiigh
         public void stopBackgroundMusic()
         {
             audiomanager.stopPlaying();
+        }
+
+        public void startBackgroundMusic()
+        {
+            switch (CurrentTheme)
+            {
+                case 0:
+                    audiomanager.play("backshroom.wav");
+                    break;
+                case 1:
+                    audiomanager.play("backdark.mp3");
+                    break;
+                case 2:
+                    audiomanager.play("backjungle.mp3");
+                    break;
+                case 3:
+                    audiomanager.play("backbutterlfy.mp3");
+                    break;
+                default:
+                    audiomanager.play("backshroom.wav");
+                    break;
+            }
         }
         
     }

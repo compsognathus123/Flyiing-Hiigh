@@ -26,9 +26,9 @@ namespace Flyiing_Hiigh
 
             setPosition(0, 0);
 
-            if (activity.isMuted()) setResourceID("Flyiing_Hiigh.Resources.Drawable.optionsmuted.png");
+            if (activity.getMuted()) setResourceID("Flyiing_Hiigh.Resources.Drawable.optionsmuted.png");
             else setResourceID("Flyiing_Hiigh.Resources.Drawable.options.png");
-            
+
             SKPaint paint = new SKPaint();
             paint.Color = (SKColor)0x3Fffffff;
 

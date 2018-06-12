@@ -18,7 +18,7 @@ namespace Flyiing_Hiigh
             setPosition(x, y);
 
             xSpeed = -2.5;
-            ySpeed = xSpeed * (y - activity.getPlayer().getRectangle().MidY)/ activity.getImageInfo().Height - 0.3;
+            ySpeed = xSpeed * (y - activity.getPlayer().getRectangle().MidY)/ activity.getImageInfo().Height - 0.5;
             
            // if (!activity.muted)
              //   Audiomanager.Play("silencer.wav", 0.5);
