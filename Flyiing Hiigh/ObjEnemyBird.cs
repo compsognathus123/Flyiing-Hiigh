@@ -16,12 +16,20 @@ namespace Flyiing_Hiigh
 
         private Boolean isFighting;
         private double time_next_shot;
+
+        private SKBitmap[] sprites;
                 
         int updown;
 
         public ObjEnemyBird(Context context) : base(context, "Bird", 0.25f, 10)
         {
-            setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.bird1.png");
+            sprites = new SKBitmap[8];
+            for (int i = 1; i < 8; i++)
+            {
+                setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.bird" + i + ".png");
+                sprites[i] = getBitmap();
+            }
+
             setPosition(activity.getImageInfo().Width, (int)(activity.getImageInfo().Height / 2 - getHeight()));
 
             resID = 1;
@@ -54,7 +62,7 @@ namespace Flyiing_Hiigh
             }
 
             //Flight animation
-            if (resource_duration > 30 && !isDead())
+            if (resource_duration > 25 && !isDead())
             {
                 if (resID == 7)
                 {
@@ -64,7 +72,6 @@ namespace Flyiing_Hiigh
                 {
                     resID++;
                 }
-                setResourceID("Flyiing_Hiigh.Resources.Drawable.Bird.bird" + resID + ".png");
                 resource_duration = 0;
             }
             else
@@ -72,8 +79,8 @@ namespace Flyiing_Hiigh
                 resource_duration++;
             }
 
-            if (ySpeed > 0.5) updown = -1;
-            if (ySpeed < -0.5) updown = 1;
+            if (ySpeed > 0.6) updown = -1;
+            if (ySpeed < -0.6) updown = 1;
 
             ySpeed += updown * 0.0025;
 
@@ -93,7 +100,7 @@ namespace Flyiing_Hiigh
                 activity.RunOnUiThread(() =>
                 {
                     int x = (int)(rect.MidX - rect.Width/3);
-                    int y = (int)rect.MidY;
+                    int y = (int) rect.MidY;
                     activity.getGameObjects().Add(new ObjNut(activity, x, y));
                 });
 
@@ -102,7 +109,7 @@ namespace Flyiing_Hiigh
 
         public override void onDeath()
         {
-            base.onDeath();
+            activity.GetGameEventHandler().OnBirdDied();
         }
 
         public override void OnCanvasViewPaintSurface(SKPaintSurfaceEventArgs e)
@@ -113,16 +120,18 @@ namespace Flyiing_Hiigh
 
             if (isDead())
             {
-                canvas.RotateDegrees(deathAnimation, rect.MidX, rect.MidY);
+                SKPoint rotatePoint = new SKPoint(rect.MidX, rect.MidY);
+
+                canvas.RotateDegrees(deathAnimation, rotatePoint.X, rotatePoint.Y);
                 canvas.DrawBitmap(getBitmap(), getRectangle());
-                canvas.RotateDegrees(-deathAnimation, rect.MidX, rect.MidY);
+                canvas.RotateDegrees(-deathAnimation, rotatePoint.X, rotatePoint.Y);
 
                 deathAnimation += 15;
                 ySpeed += 0.2;
             }
             else
             {
-                canvas.DrawBitmap(getBitmap(), getRectangle());
+                canvas.DrawBitmap(sprites[resID], getRectangle());
 
                 //Draw health-bar
                 int separate = 20;
@@ -142,8 +151,8 @@ namespace Flyiing_Hiigh
                      Color = SKColors.White
                 };
 
-                float hp = -((activity.getImageInfo().Width - separate) - (activity.getImageInfo().Width / 2 + separate)) * ((10 - getHealth()) / 10);
-
+                float hp = -((activity.getImageInfo().Width - separate) - (activity.getImageInfo().Width / 2 + separate)) * ((10 - (float)getHealth()) / 10);
+              
                 SKRect margin = new SKRect(activity.getImageInfo().Width / 2 + separate, activity.getImageInfo().Height - separate * 2, activity.getImageInfo().Width - separate, activity.getImageInfo().Height - separate);
                 SKRect fill = new SKRect(activity.getImageInfo().Width / 2 + separate, activity.getImageInfo().Height - separate * 2, activity.getImageInfo().Width - separate + (int)hp, activity.getImageInfo().Height - separate);
 

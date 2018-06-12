@@ -83,11 +83,13 @@ namespace Flyiing_Hiigh
 
             if(isDead())
             {
-                canvas.RotateDegrees(deathAnimation, rect.MidX, rect.MidY);
-                canvas.DrawBitmap(getBitmap(), getRectangle());
-                canvas.RotateDegrees(-deathAnimation, rect.MidX, rect.MidY);
+                SKPoint rotatePoint = new SKPoint(rect.MidX, rect.MidY);
 
-                deathAnimation+= 12;
+                canvas.RotateDegrees(deathAnimation, rotatePoint.X, rotatePoint.Y);
+                canvas.DrawBitmap(getBitmap(), getRectangle());
+                canvas.RotateDegrees(-deathAnimation, rotatePoint.X, rotatePoint.Y);
+
+                deathAnimation += 12;
                 ySpeed += 0.2;
             }           
             else

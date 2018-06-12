@@ -33,7 +33,6 @@ namespace Flyiing_Hiigh
                 activity.removeGameObject(this);
             }
 
-            rotate_degree += 2;
             rect.Offset((float)xSpeed, (float)ySpeed);
         }
 
@@ -43,11 +42,12 @@ namespace Flyiing_Hiigh
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
-            canvas.RotateDegrees(rotate_degree, getRectangle().MidX, getRectangle().MidY);
+            SKPoint rotatePoint = new SKPoint(getRectangle().MidX, getRectangle().MidY);
+            rotate_degree += 20;
 
+            canvas.RotateDegrees(rotate_degree, rotatePoint.X, rotatePoint.Y);
             canvas.DrawBitmap(getBitmap(), getRectangle());
-
-            canvas.RotateDegrees(-rotate_degree, getRectangle().MidX, getRectangle().MidY);
+            canvas.RotateDegrees(-rotate_degree, rotatePoint.X, rotatePoint.Y);
 
         }
 

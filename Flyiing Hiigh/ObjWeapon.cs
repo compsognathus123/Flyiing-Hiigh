@@ -26,11 +26,11 @@ namespace Flyiing_Hiigh
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
-            canvas.RotateDegrees(-animationXOffset / 2, getRectangle().Left, getRectangle().MidY);
+            SKPoint rotatePoint = new SKPoint(getRectangle().Left, getRectangle().MidY);
 
+            canvas.RotateDegrees(-animationXOffset / 2, rotatePoint.X, rotatePoint.Y);
             canvas.DrawBitmap(getBitmap(), getRectangle());
-
-            canvas.RotateDegrees(animationXOffset / 2, getRectangle().Left, getRectangle().MidY);
+            canvas.RotateDegrees(animationXOffset / 2, rotatePoint.X, rotatePoint.Y);
         }
 
         public override void move()

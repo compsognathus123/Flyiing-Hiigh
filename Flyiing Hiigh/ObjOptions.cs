@@ -13,9 +13,12 @@ namespace Flyiing_Hiigh
 {
     public class ObjOptions : GameObject
     {
+        Boolean muted;
 
         public ObjOptions(Context context) : base(context, "Options", 1)
         {
+            if (activity.isMuted()) setResourceID("Flyiing_Hiigh.Resources.Drawable.optionsmuted.png");
+            else setResourceID("Flyiing_Hiigh.Resources.Drawable.options.png");
         }
 
         public override void OnCanvasViewPaintSurface(SKPaintSurfaceEventArgs e)
@@ -26,8 +29,12 @@ namespace Flyiing_Hiigh
 
             setPosition(0, 0);
 
-            if (activity.getMuted()) setResourceID("Flyiing_Hiigh.Resources.Drawable.optionsmuted.png");
-            else setResourceID("Flyiing_Hiigh.Resources.Drawable.options.png");
+            if(muted != activity.isMuted())
+            {
+                if (activity.isMuted()) setResourceID("Flyiing_Hiigh.Resources.Drawable.optionsmuted.png");
+                else setResourceID("Flyiing_Hiigh.Resources.Drawable.options.png");
+                muted = activity.isMuted();
+            }
 
             SKPaint paint = new SKPaint();
             paint.Color = (SKColor)0x3Fffffff;

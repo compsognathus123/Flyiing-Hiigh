@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Flyiing_Hiigh
 {
-    class GameEventHandler
+    public class GameEventHandler
     {
         GameActivity activity;
 
@@ -12,9 +12,11 @@ namespace Flyiing_Hiigh
         List<gameevent> archievedEvents;
         
         double SPAWNTIME_WEAPON = 1500;
-        double SPAWNTIME_SPIDERS = 1500;
+        double SPAWNTIME_SPIDERS = 7500;
         double SPAWNTIME_BEES = 1500;
-        double SPAWNTIME_BIRD = 50000;
+        double SPAWNTIME_BIRD = 10000;
+
+        private double next_bird_spawn_delta = 10000;
 
         private double next_bee_spawn_time = 2500;
         private double next_spider_spawn_time = 3000;
@@ -26,6 +28,17 @@ namespace Flyiing_Hiigh
             this.archievedEvents = archievedEvents;
 
             time = activity.getTime();
+        }
+
+        public void OnBirdDied()
+        {
+            activity.RunOnUiThread(() =>
+            {
+                archievedEvents.Remove(gameevent.BIRD_SPAWNED);
+                archievedEvents.Add(gameevent.SPAWNING_SPIDERS);
+                archievedEvents.Add(gameevent.SPAWNING_BEES);
+                SPAWNTIME_BIRD = time + next_bird_spawn_delta;
+            });
         }
 
         public void checkEvents()
@@ -75,11 +88,9 @@ namespace Flyiing_Hiigh
         private void spawnBird()
         {
             if(!archievedEvents.Contains(gameevent.BIRD_SPAWNED) && time > SPAWNTIME_BIRD)
-            {
-
-               
-                    archievedEvents.Add(gameevent.BIRD_SPAWNED);
-                    activity.getGameObjects().Add(new ObjEnemyBird(activity));   
+            {                              
+                archievedEvents.Add(gameevent.BIRD_SPAWNED);
+                activity.getGameObjects().Add(new ObjEnemyBird(activity));   
             }
         }
 

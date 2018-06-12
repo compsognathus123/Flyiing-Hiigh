@@ -11,7 +11,7 @@ namespace Flyiing_Hiigh
         ObjWeapon weapon;
         private float animationXOffset;
 
-        public ObjPlayer(Context context) : base(context, "ObjPlayer", 0.095f)
+        public ObjPlayer(Context context) : base(context, "ObjPlayer", 0.1f)
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
             this.rect = new SKRect(125, 200, 200, 275);
@@ -60,7 +60,7 @@ namespace Flyiing_Hiigh
 
         public void setWeapon(ObjWeapon weapon)
         {
-            if (!activity.muted)
+            if (!activity.isMuted())
                 Audiomanager.Play("gunload.mp3", 20);
 
             this.weapon = weapon;

@@ -33,8 +33,7 @@ namespace Flyiing_Hiigh
         private Timer timer;
         private double tick_duration_ms;
         private double time;
-
-        public Boolean muted;
+        
         public Boolean godmode;
 
         private int theme;
@@ -50,21 +49,25 @@ namespace Flyiing_Hiigh
         private ObjPlayer player;
         private ObjBackground background;
         private ObjOptions options;
-
-        //SKBitmap optionsbutton;
-
+        
         public String infotext = "no Text";
         private SKTypeface typeface;
 
         private int score;
-
-
+        
 
         //************************************BUTTONS/FRAMEWORK******************************
         public override void OnBackPressed()
         {
-            Intent startActivityIntent = new Intent(this, typeof(StartActivity));
-            StartActivity(startActivityIntent);
+            if (isPaused())
+            {
+                setPause(false);
+            }
+            else
+            {
+                Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+                StartActivity(startActivityIntent);
+            }
         }
         
         protected override void OnCreate(Bundle savedInstanceState)
@@ -110,12 +113,6 @@ namespace Flyiing_Hiigh
                 typeface = SKTypeface.FromStream(fontStream);
             }
             
-            /*Assembly assembly = GetType().GetTypeInfo().Assembly;
-            using (Stream stream = assembly.GetManifestResourceStream("Flyiing_Hiigh.Resources.Drawable.buttonoptions.png"))
-            using (SKManagedStream skStream = new SKManagedStream(stream))
-            {
-                optionsbutton = SKBitmap.Decode(skStream);
-            }*/
 
         }
 
@@ -127,39 +124,13 @@ namespace Flyiing_Hiigh
             background.stopBackgroundMusic();
         }
 
-        public void setPause(Boolean pause)
-        {
-            if (pause)
-            {
-                RunOnUiThread(() =>
-                {
-                    options = new ObjOptions(this);
-                    gameObjects.Add(options);
-                    timer.Enabled = false;
-                    archievedEvents.Add(gameevent.GAME_PAUSED);
-                });
-
-            }
-            else
-            {
-                RunOnUiThread(() =>
-                {
-                    gameObjects.Remove(options);
-                    timer.Enabled = true;
-                    archievedEvents.Remove(gameevent.GAME_PAUSED);
-                });
-            }
-        }
-
-       
+              
         private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             imageInfo = e.Info;
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
-
-            
-
+                        
             canvas.Clear();
                        
             foreach (GameObject obj in gameObjects)
@@ -168,18 +139,17 @@ namespace Flyiing_Hiigh
                // infotext += obj.getTyp() + " ";
             }
 
-
             //InfoText & heller Button
             SKPaint textPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 TextAlign = SKTextAlign.Left,
                 Typeface = typeface,
-                Color = 0x7eFFFFFF,
+                Color = 0x96FFFFFF,
                 TextSize = 48,
             };
 
-            // Dunkle Striche in Pausebutton
+            /* Dunkle Striche in Pausebutton
             SKPaint darkPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
@@ -188,13 +158,13 @@ namespace Flyiing_Hiigh
                 Color = 0x7e000000,
                 TextSize = 48
                 
-            };
+            };*/
 
 
             canvas.DrawText(infotext, 20, 48, textPaint);
-            canvas.DrawRect(imageInfo.Width * 0.93f, 0, imageInfo.Width*0.07f, imageInfo.Width * 0.07f,textPaint);
-            canvas.DrawRect(imageInfo.Width * 0.945f, imageInfo.Width * 0.01f, imageInfo.Width*0.015f, imageInfo.Width * 0.05f, darkPaint);
-            canvas.DrawRect(imageInfo.Width * 0.97f, imageInfo.Width * 0.01f, imageInfo.Width * 0.015f, imageInfo.Width * 0.05f, darkPaint);
+            //canvas.DrawRect(imageInfo.Width * 0.93f, 0, imageInfo.Width*0.07f, imageInfo.Width * 0.07f,textPaint);
+            canvas.DrawRoundRect(imageInfo.Width * 0.945f, imageInfo.Width * 0.01f, imageInfo.Width*0.015f, imageInfo.Width * 0.05f, 5, 5, textPaint);
+            canvas.DrawRoundRect(imageInfo.Width * 0.97f, imageInfo.Width * 0.01f, imageInfo.Width * 0.015f, imageInfo.Width * 0.05f, 5, 5, textPaint);
 
         }
 
@@ -236,11 +206,10 @@ namespace Flyiing_Hiigh
                     if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.438f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
                     {
                         activateGodmode();
-                    }else if(touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.5537f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
+                    }
+                    else if(touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.5537f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
                     {
                         toggleMuted();
-                        if (getMuted()) background.stopBackgroundMusic();
-                        if (!getMuted()) background.startBackgroundMusic();
                     }
                     else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.3719f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.5217f))
                     {
@@ -250,7 +219,11 @@ namespace Flyiing_Hiigh
                     {
                         OnBackPressed();
                     }
-                    
+                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width * 0.07f))
+                    {
+                        setPause(false);
+                    }
+
                 }
             }
         }
@@ -274,14 +247,13 @@ namespace Flyiing_Hiigh
             archievedEvents.Add(gameevent.GAME_FINISHED);
             background.stopBackgroundMusic();
             timer.Stop();
-
             
-                Intent endActivityIntent = new Intent(this, typeof(EndActivity));
+            Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
-                endActivityIntent.PutExtra("death_reason", death_reason);
-                endActivityIntent.PutExtra("score", score);
+            endActivityIntent.PutExtra("death_reason", death_reason);
+            endActivityIntent.PutExtra("score", score);
 
-                StartActivity(endActivityIntent);
+            StartActivity(endActivityIntent);
 
         }
 
@@ -334,9 +306,9 @@ namespace Flyiing_Hiigh
         {
             time += tick_duration_ms;
 
-           infotext = (int)(time/500) + "m";
+            infotext = (int)(time/500) + "m";
+
             if ((time % 5000) == 4999) increaseScore();
-           // infotext = player.getRectangle().Width + " " + player.getRectangle().Height;
 
             RunOnUiThread(() =>
             {
@@ -349,19 +321,53 @@ namespace Flyiing_Hiigh
 
         }
 
-        public Boolean getMuted()
-        {
-            return muted;
-        }
-
+       
         public void toggleMuted()
         {
-            muted = !getMuted();
+            if (isMuted())
+            {
+                background.startBackgroundMusic();
+                RunOnUiThread(() =>
+                {
+                    archievedEvents.Remove(gameevent.GAME_MUTED);
+                });
+            }
+            else
+            {
+                background.stopBackgroundMusic();
+                RunOnUiThread(() =>
+                {
+                    archievedEvents.Add(gameevent.GAME_MUTED);
+                });
+            }
         }
 
         public Boolean isMuted()
         {
             return archievedEvents.Contains(gameevent.GAME_MUTED);
+        }
+
+        public void setPause(Boolean pause)
+        {
+            if (pause)
+            {
+                RunOnUiThread(() =>
+                {
+                    options = new ObjOptions(this);
+                    gameObjects.Add(options);
+                    timer.Enabled = false;
+                    archievedEvents.Add(gameevent.GAME_PAUSED);
+                });
+            }
+            else
+            {
+                RunOnUiThread(() =>
+                {
+                    gameObjects.Remove(options);
+                    timer.Enabled = true;
+                    archievedEvents.Remove(gameevent.GAME_PAUSED);
+                });
+            }
         }
 
         public Boolean isPaused()
@@ -381,7 +387,6 @@ namespace Flyiing_Hiigh
 
         public void activateGodmode()
         {
-
             LayoutInflater layoutInflater = LayoutInflater.From(this);
             View view = layoutInflater.Inflate(Resource.Layout.GiftCode, null);
 
@@ -405,9 +410,6 @@ namespace Flyiing_Hiigh
                    });
              Android.Support.V7.App.AlertDialog dialog = alertbuilder.Create();
             dialog.Show();
-          //  if (String.Compare(code, "godmode", true) == 0) toggleGodmode();
-           // if (code == "godmode") godmode = !godmode;
-            //Console.WriteLine( code + " " + godmode);
         }
 
         public void setGodmode(Boolean gm)
@@ -463,6 +465,10 @@ namespace Flyiing_Hiigh
             });
         }
         
+        public GameEventHandler GetGameEventHandler()
+        {
+            return eventHandler;
+        }
 
         public List<GameObject> getGameObjects()
         {

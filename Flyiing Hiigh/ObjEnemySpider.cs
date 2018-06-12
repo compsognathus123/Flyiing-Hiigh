@@ -15,8 +15,7 @@ namespace Flyiing_Hiigh
             setPosition(x, y);
 
             xSpeed = -1;
-            ySpeed = 1;
-            
+            ySpeed = 1;            
         }
 
         public override void OnCanvasViewPaintSurface(SKPaintSurfaceEventArgs e)
@@ -25,17 +24,19 @@ namespace Flyiing_Hiigh
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
-            SKPaint lineCol = new SKPaint { Color = SKColors.White};
+            SKPaint lineCol = new SKPaint { Color = SKColors.White.WithAlpha(180), StrokeWidth = 3, IsStroke = true};
 
             if (isDead())
             {
                 canvas.DrawLine(this.rect.MidX, 0, this.rect.MidX, midYOnDeath, lineCol);
 
-                canvas.RotateDegrees(deathAnimation, rect.MidX, rect.MidY);
-                canvas.DrawBitmap(getBitmap(), getRectangle());
-                canvas.RotateDegrees(-deathAnimation, rect.MidX, rect.MidY);
+                SKPoint rotatePoint = new SKPoint(rect.MidX, rect.MidY);
 
-                midYOnDeath -= 15;
+                canvas.RotateDegrees(deathAnimation, rotatePoint.X, rotatePoint.Y);
+                canvas.DrawBitmap(getBitmap(), getRectangle());
+                canvas.RotateDegrees(-deathAnimation, rotatePoint.X, rotatePoint.Y);
+                                
+                midYOnDeath -= 25;
                 deathAnimation += 12;
                 ySpeed += 0.2;
             }

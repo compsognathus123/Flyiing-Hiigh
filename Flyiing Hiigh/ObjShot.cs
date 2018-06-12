@@ -17,7 +17,7 @@ namespace Flyiing_Hiigh
             xSpeed = 7;
             resID = 0;
 
-            if (!activity.muted)
+            if (!activity.isMuted())
                 Audiomanager.Play("silencer.wav", 0.5);
 
         }
