@@ -383,7 +383,7 @@ namespace Flyiing_Hiigh
         {
 
             LayoutInflater layoutInflater = LayoutInflater.From(this);
-            View view = layoutInflater.Inflate(Resource.Layout.InputDialog, null);
+            View view = layoutInflater.Inflate(Resource.Layout.GiftCode, null);
 
             Android.Support.V7.App.AlertDialog.Builder alertbuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
             alertbuilder.SetView(view);
@@ -394,8 +394,10 @@ namespace Flyiing_Hiigh
             alertbuilder.SetCancelable(false)
             .SetPositiveButton("Choose", delegate
                  {
-                        code = input.Text;
-                        canvasView.Invalidate();
+                     code = input.Text;
+                     if (code == "godmode") godmode = !godmode;
+                     Console.WriteLine(code + " " + godmode);
+                     canvasView.Invalidate();
                   })
             .SetNegativeButton("Cancel", delegate
                    {
@@ -404,8 +406,8 @@ namespace Flyiing_Hiigh
              Android.Support.V7.App.AlertDialog dialog = alertbuilder.Create();
             dialog.Show();
           //  if (String.Compare(code, "godmode", true) == 0) toggleGodmode();
-            if (code == "godmode") godmode = !godmode;
-            Console.WriteLine( code + " " + godmode);
+           // if (code == "godmode") godmode = !godmode;
+            //Console.WriteLine( code + " " + godmode);
         }
 
         public void setGodmode(Boolean gm)
