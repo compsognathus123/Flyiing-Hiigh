@@ -60,20 +60,32 @@ namespace Flyiing_Hiigh
             
             if (downloadScores())
             {
-                UserScore dlScore = scorelist.Find(x => x.user == myusername);
 
-                UserScore removeScore = scorelist.Find(x => x.user == "test");
-                scorelist.Remove(removeScore);
-
-                if (dlScore.score < myscore)
+                if (myusername != "" && myscore != 0)
                 {
-                    scorelist.Remove(dlScore);
-                    dlScore.score = myscore;
-                    scorelist.Add(dlScore);
-                    scorelist.Sort((x, y) => x.score.CompareTo(y.score));
+                    if(scorelist.Exists(x => x.user == myusername))
+                    {
+                        UserScore myDownloadedUserScore = scorelist.Find(x => x.user == myusername);
 
-                    uploadScores();
+                        if (myDownloadedUserScore.score < myscore)
+                        {
+                            scorelist.Remove(myDownloadedUserScore);
+                            scorelist.Add(new UserScore(myusername, myscore));
+                            scorelist.Sort((x, y) => x.score.CompareTo(y.score));
+
+                            uploadScores();
+                        }
+                    }
+                    else
+                    {
+                        scorelist.Add(new UserScore(myusername, myscore));
+                        scorelist.Sort((x, y) => x.score.CompareTo(y.score));
+
+                        uploadScores();
+                    }
+                                       
                 }
+
             }
             else
             {
@@ -84,14 +96,12 @@ namespace Flyiing_Hiigh
 
             SetContentView(Resource.Layout.ScoreScreen);
             fillListView();
-
             
         }
 
         private void fillListView()
         {
             List<String> scores = new List<String>();
-
 
             foreach (UserScore sc in scorelist)
             {
@@ -168,6 +178,7 @@ namespace Flyiing_Hiigh
             }          
 
         }
+
 
 
     }

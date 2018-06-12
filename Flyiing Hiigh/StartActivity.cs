@@ -8,7 +8,6 @@ using System.IO;
 using SkiaSharp;
 using System.Reflection;
 using SkiaSharp.Views.Android;
-using Android.Preferences;
 using Android.Widget;
 
 namespace Flyiing_Hiigh
@@ -23,8 +22,6 @@ namespace Flyiing_Hiigh
         ISharedPreferences preferences;
 
         private SKBitmap backgroundBitmap;
-        //private SKBitmap bgshroomBitmap;
-        //private SKBitmap playbuttonBitmap;
         
         public override void OnBackPressed()
         {
@@ -41,7 +38,7 @@ namespace Flyiing_Hiigh
 
             SetContentView(Resource.Layout.StartScreen);
 
-            preferences  = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
+            preferences = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
 
             loadPreferences();
             initializeStartScreen();
