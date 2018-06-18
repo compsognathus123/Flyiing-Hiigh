@@ -10,7 +10,7 @@ namespace Flyiing_Hiigh
         SKRect rect1;
         SKRect rect2;
 
-        int CurrentTheme;
+        int currentTheme;
 
         Boolean screen_init;
 
@@ -18,7 +18,7 @@ namespace Flyiing_Hiigh
 
         public ObjBackground(Context context, int theme) : base(context, "Background", 1)
         {
-            CurrentTheme = theme;
+            currentTheme = theme;
             String resID;
             audiomanager = new Audiomanager();
 
@@ -93,14 +93,14 @@ namespace Flyiing_Hiigh
             canvas.DrawBitmap(getBitmap(), rects[1]);
         }
 
-        public void stopBackgroundMusic()
+        public Audiomanager getAudiomanger()
         {
-            audiomanager.stopPlaying();
+            return audiomanager;
         }
-
+        
         public void startBackgroundMusic()
         {
-            switch (CurrentTheme)
+            switch (currentTheme)
             {
                 case 0:
                     audiomanager.play("backshroom.wav");

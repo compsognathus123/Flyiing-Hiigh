@@ -12,14 +12,18 @@ namespace Flyiing_Hiigh
         List<gameevent> archievedEvents;
         
         double SPAWNTIME_WEAPON = 1500;
-        double SPAWNTIME_SPIDERS = 7500;
+        double SPAWNTIME_SPIDERS = 7650;
         double SPAWNTIME_BEES = 1500;
-        double SPAWNTIME_BIRD = 10000;
+        double SPAWNTIME_BIRD = 50000;
 
-        private double next_bird_spawn_delta = 10000;
+        int nth_bird;
+
+        private double next_bird_spawn_delta = 30000;
 
         private double next_bee_spawn_time = 2500;
         private double next_spider_spawn_time = 3000;
+
+        Random rnd;
 
 
         public GameEventHandler(GameActivity activity, List<gameevent> archievedEvents)
@@ -32,6 +36,8 @@ namespace Flyiing_Hiigh
 
         public void OnBirdDied()
         {
+            nth_bird++;
+
             activity.RunOnUiThread(() =>
             {
                 archievedEvents.Remove(gameevent.BIRD_SPAWNED);
@@ -52,6 +58,7 @@ namespace Flyiing_Hiigh
 
             activity.RunOnUiThread(() =>
             {
+                rnd = new Random();
                 spawnWeapon();
                 spawnBees();
                 spawnSpiders();
@@ -72,7 +79,6 @@ namespace Flyiing_Hiigh
 
             if (time > next_spider_spawn_time && archievedEvents.Contains(gameevent.SPAWNING_SPIDERS))
             {
-                Random rnd = new Random();
                 int x = activity.getImageInfo().Width;
                 int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 300));
 
@@ -81,7 +87,7 @@ namespace Flyiing_Hiigh
                     activity.getGameObjects().Add(new ObjEnemySpider(activity,x,y));
                 });
 
-                next_spider_spawn_time = time + 5000 - (time / (SPAWNTIME_BIRD - 2000) * 4600);
+                next_spider_spawn_time = time + 7200 - (time / (SPAWNTIME_BIRD - 2000) * 6700);
             }
         }
 
@@ -90,7 +96,8 @@ namespace Flyiing_Hiigh
             if(!archievedEvents.Contains(gameevent.BIRD_SPAWNED) && time > SPAWNTIME_BIRD)
             {                              
                 archievedEvents.Add(gameevent.BIRD_SPAWNED);
-                activity.getGameObjects().Add(new ObjEnemyBird(activity));   
+
+                activity.getGameObjects().Add(new ObjEnemyBird(activity, nth_bird));
             }
         }
 
@@ -99,12 +106,11 @@ namespace Flyiing_Hiigh
             if (!archievedEvents.Contains(gameevent.WEAPON_SPAWNED) && time > SPAWNTIME_WEAPON)
             {
                 archievedEvents.Add(gameevent.WEAPON_SPAWNED);
-
-                Random rnd = new Random();
+                
                 int x = activity.getImageInfo().Width;
                 int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 200));
 
-                    activity.getGameObjects().Add(new ObjWeapon(activity, x, y));
+                activity.getGameObjects().Add(new ObjWeapon(activity, x, y));
 
             }
         }
@@ -122,11 +128,10 @@ namespace Flyiing_Hiigh
 
             if (time > next_bee_spawn_time && archievedEvents.Contains(gameevent.SPAWNING_BEES))
             {
-                Random rnd = new Random();
                 int x = activity.getImageInfo().Width;
                 int y = rnd.Next(0, rnd.Next(activity.getImageInfo().Height - 100));
 
-                    activity.getGameObjects().Add(new EnemyBee(activity, x, y, false));
+                activity.getGameObjects().Add(new EnemyBee(activity, x, y, false));
 
                 next_bee_spawn_time = time + 5000 - (time / (SPAWNTIME_BIRD - 2000) * 4600);
             }

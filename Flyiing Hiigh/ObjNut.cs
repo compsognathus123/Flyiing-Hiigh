@@ -18,7 +18,7 @@ namespace Flyiing_Hiigh
             setPosition(x, y);
 
             xSpeed = -2.5;
-            ySpeed = xSpeed * (y - activity.getPlayer().getRectangle().MidY)/ activity.getImageInfo().Height - 0.5;
+            ySpeed = xSpeed * (y - activity.getPlayer().getRectangle().MidY)/ activity.getImageInfo().Height;
             
            // if (!activity.muted)
              //   Audiomanager.Play("silencer.wav", 0.5);
@@ -27,7 +27,7 @@ namespace Flyiing_Hiigh
 
         public override void move()
         {
-            ySpeed += 0.005;
+           // ySpeed += 0.005;
             if (rect.Right < 0)
             {
                 activity.removeGameObject(this);

@@ -7,6 +7,8 @@ using System.IO;
 using SkiaSharp;
 using System.Reflection;
 using SkiaSharp.Views.Android;
+using Android.Transitions;
+
 namespace Flyiing_Hiigh
 {
     [Activity(ScreenOrientation = Android.Content.PM.ScreenOrientation.Landscape)]
@@ -29,12 +31,11 @@ namespace Flyiing_Hiigh
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
-
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
+            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+                        
             SetContentView(Resource.Layout.EndScreen);
-
 
             score = Intent.Extras.GetInt("score");
             death_reason = Intent.Extras.GetString("death_reason");
@@ -150,7 +151,9 @@ namespace Flyiing_Hiigh
         public void OnCanvasClicked(object sender, EventArgs e)
         {
             Intent mainActivityIntent = new Intent(this, typeof(StartActivity));
+            mainActivityIntent.SetFlags(ActivityFlags.SingleTop);
             StartActivity(mainActivityIntent);
+            Finish();
 
         }
         

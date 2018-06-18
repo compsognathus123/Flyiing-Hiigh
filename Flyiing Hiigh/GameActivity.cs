@@ -10,7 +10,7 @@ using Android.Views;
 using SkiaSharp;
 using SkiaSharp.Views.Android;
 using Android.Widget;
-
+using Android.Transitions;
 
 namespace Flyiing_Hiigh 
 {
@@ -65,17 +65,30 @@ namespace Flyiing_Hiigh
             }
             else
             {
+                background.getAudiomanger().stopPlaying();
+                timer.Stop();
+                archievedEvents.Add(gameevent.GAME_FINISHED);
+
                 Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+                startActivityIntent.AddFlags(ActivityFlags.SingleTop);
                 StartActivity(startActivityIntent);
+
+                Finish();
             }
         }
-        
+
+                
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
             Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
 
+            Window.AllowEnterTransitionOverlap = true;
+            Window.EnterTransition = new Fade();
+            Window.SharedElementEnterTransition = new Fade();
+            Window.RequestFeature(WindowFeatures.ContentTransitions);
+            
             SetContentView(Resource.Layout.GameScreen);
             
             FindViewById<SKCanvasView>(Resource.Id.canvasView).Touch += OnScreenTouched;
@@ -93,6 +106,7 @@ namespace Flyiing_Hiigh
 
             canvasView = FindViewById<SKCanvasView>(Resource.Id.canvasView);
             canvasView.PaintSurface += OnCanvasViewPaintSurface;
+
 
             background = new ObjBackground(this, theme);
             player = new ObjPlayer(this);
@@ -120,8 +134,10 @@ namespace Flyiing_Hiigh
         protected override void OnPause()
         {
             base.OnPause();
-            timer.Enabled = false;
-            background.stopBackgroundMusic();
+            if (!archievedEvents.Contains(gameevent.GAME_FINISHED))
+            {
+                setPause(true);
+            }
         }
 
               
@@ -149,41 +165,43 @@ namespace Flyiing_Hiigh
                 TextSize = 48,
             };
 
-            /* Dunkle Striche in Pausebutton
-            SKPaint darkPaint = new SKPaint
-            {
-                Style = SKPaintStyle.Fill,
-                TextAlign = SKTextAlign.Left,
-                Typeface = typeface,
-                Color = 0x7e000000,
-                TextSize = 48
-                
-            };*/
-
-
             canvas.DrawText(infotext, 20, 48, textPaint);
-            //canvas.DrawRect(imageInfo.Width * 0.93f, 0, imageInfo.Width*0.07f, imageInfo.Width * 0.07f,textPaint);
             canvas.DrawRoundRect(imageInfo.Width * 0.945f, imageInfo.Width * 0.01f, imageInfo.Width*0.015f, imageInfo.Width * 0.05f, 5, 5, textPaint);
             canvas.DrawRoundRect(imageInfo.Width * 0.97f, imageInfo.Width * 0.01f, imageInfo.Width * 0.015f, imageInfo.Width * 0.05f, 5, 5, textPaint);
 
         }
 
-
+       
         //>>>>>>>>>>>>>>>>>>>>>>TOUCHEVENTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         private void OnScreenTouched(object sender, View.TouchEventArgs touchEventArgs)
         {
-            if (touchEventArgs.Event.Action == MotionEventActions.Down)
+            int pointerIndex = touchEventArgs.Event.ActionIndex;
+
+            if(touchEventArgs.Event.Action == MotionEventActions.Up || touchEventArgs.Event.Action == MotionEventActions.Pointer2Up)
             {
                 if (!isPaused())
                 {
-                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width * 0.07f))
+                    if ((touchEventArgs.Event.GetX(pointerIndex) > imageInfo.Width / 4) || player.getWeapon() == null)
+                    {
+                        player.accelerate(false);
+
+                    }
+                }
+            }
+
+
+            if (touchEventArgs.Event.Action == MotionEventActions.Down || touchEventArgs.Event.Action == MotionEventActions.Pointer2Down)
+            {
+                if (!isPaused())
+                {
+                    if (touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Width * 0.07f))
                     {
                         setPause(true);
                     }
-                    else if ((touchEventArgs.Event.GetX() > imageInfo.Width / 4) || player.getWeapon() == null)
+                    else if ((touchEventArgs.Event.GetX(pointerIndex) > imageInfo.Width / 4) || player.getWeapon() == null)
                     {
-                        player.accelerate();
+                        player.accelerate(true);
 
                     }
                     else
@@ -203,23 +221,23 @@ namespace Flyiing_Hiigh
                 }
                 else
                 {
-                    if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.438f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
+                    if (touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.438f) && touchEventArgs.Event.GetX(pointerIndex) < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY(pointerIndex) > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Height * 0.6522f))
                     {
                         activateGodmode();
                     }
-                    else if(touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.5537f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.6522f))
+                    else if(touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX(pointerIndex) < (imageInfo.Width * 0.5537f) && touchEventArgs.Event.GetY(pointerIndex) > (imageInfo.Height * 0.5652f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Height * 0.6522f))
                     {
                         toggleMuted();
                     }
-                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.3719f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.5217f))
+                    else if (touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.3719f) && touchEventArgs.Event.GetX(pointerIndex) < (imageInfo.Width * 0.4876f) && touchEventArgs.Event.GetY(pointerIndex) > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Height * 0.5217f))
                     {
                         setPause(false);
                     }
-                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX() < (imageInfo.Width * 0.6281f) && touchEventArgs.Event.GetY() > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY() < (imageInfo.Height * 0.5217f))
+                    else if (touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.5041f) && touchEventArgs.Event.GetX(pointerIndex) < (imageInfo.Width * 0.6281f) && touchEventArgs.Event.GetY(pointerIndex) > (imageInfo.Height * 0.4493f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Height * 0.5217f))
                     {
                         OnBackPressed();
                     }
-                    else if (touchEventArgs.Event.GetX() > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY() < (imageInfo.Width * 0.07f))
+                    else if (touchEventArgs.Event.GetX(pointerIndex) > (imageInfo.Width * 0.93f) && touchEventArgs.Event.GetY(pointerIndex) < (imageInfo.Width * 0.07f))
                     {
                         setPause(false);
                     }
@@ -245,16 +263,17 @@ namespace Flyiing_Hiigh
             }
 
             archievedEvents.Add(gameevent.GAME_FINISHED);
-            background.stopBackgroundMusic();
+            background.getAudiomanger().stopPlaying();
             timer.Stop();
             
             Intent endActivityIntent = new Intent(this, typeof(EndActivity));
 
             endActivityIntent.PutExtra("death_reason", death_reason);
             endActivityIntent.PutExtra("score", score);
+            endActivityIntent.SetFlags(ActivityFlags.SingleTop);
 
             StartActivity(endActivityIntent);
-
+            Finish();
         }
 
         private void moveGameObjects()
@@ -326,7 +345,8 @@ namespace Flyiing_Hiigh
         {
             if (isMuted())
             {
-                background.startBackgroundMusic();
+                if(!isPaused()) background.getAudiomanger().Resume();
+
                 RunOnUiThread(() =>
                 {
                     archievedEvents.Remove(gameevent.GAME_MUTED);
@@ -334,7 +354,7 @@ namespace Flyiing_Hiigh
             }
             else
             {
-                background.stopBackgroundMusic();
+                background.getAudiomanger().Pause();
                 RunOnUiThread(() =>
                 {
                     archievedEvents.Add(gameevent.GAME_MUTED);
@@ -357,6 +377,7 @@ namespace Flyiing_Hiigh
                     gameObjects.Add(options);
                     timer.Enabled = false;
                     archievedEvents.Add(gameevent.GAME_PAUSED);
+                    background.getAudiomanger().Pause();
                 });
             }
             else
@@ -366,6 +387,7 @@ namespace Flyiing_Hiigh
                     gameObjects.Remove(options);
                     timer.Enabled = true;
                     archievedEvents.Remove(gameevent.GAME_PAUSED);
+                    if (!isMuted()) background.getAudiomanger().Resume();
                 });
             }
         }
