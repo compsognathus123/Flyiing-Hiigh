@@ -9,6 +9,9 @@ using SkiaSharp;
 using System.Reflection;
 using SkiaSharp.Views.Android;
 using Android.Widget;
+using Android.Transitions;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Flyiing_Hiigh
 {
@@ -24,9 +27,20 @@ namespace Flyiing_Hiigh
         ISharedPreferences preferences;
 
         private SKBitmap backgroundBitmap;
-        
+
+        //Animation
+        Stopwatch stopwatch = new Stopwatch();
+        bool pageIsActive;
+        float scale;
+
         public override void OnBackPressed()
         {
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            pageIsActive = false;
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -36,12 +50,20 @@ namespace Flyiing_Hiigh
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
 
+            Window.SharedElementExitTransition = new Fade();
+            Window.ExitTransition = new Fade();
+            Window.RequestFeature(WindowFeatures.ActivityTransitions);
+            Window.RequestFeature(WindowFeatures.ContentTransitions);
+
             SetContentView(Resource.Layout.StartScreen);
 
             preferences = GetSharedPreferences("FlyingHigh", FileCreationMode.Private);
 
             loadPreferences();
             initializeStartScreen();
+
+            pageIsActive = true;
+            AnimationLoop();
         }
 
         private void loadPreferences()
@@ -103,13 +125,16 @@ namespace Flyiing_Hiigh
             {
                 if (scoreButton.IntersectsWith(new SKRect(e.Event.GetX() - 5, e.Event.GetY() - 5, e.Event.GetX() + 5, e.Event.GetY() + 5)))
                 {
-                    Intent startActivityIntent = new Intent(this, typeof(ScoreActivity));
-                    StartActivity(startActivityIntent);
+                    Intent scoreActivityIntent = new Intent(this, typeof(ScoreActivity));
+                    scoreActivityIntent.SetFlags(ActivityFlags.SingleTop);
+                    StartActivity(scoreActivityIntent);
                 }
                 else
                 {
                     Intent gameActivityIntent = new Intent(this, typeof(GameActivity));
-                    StartActivity(gameActivityIntent);
+                    gameActivityIntent.SetFlags(ActivityFlags.SingleTop);
+                    gameActivityIntent.SetFlags(ActivityFlags.ClearTop);
+                    StartActivity(gameActivityIntent, ActivityOptions.MakeSceneTransitionAnimation(this).ToBundle());
                 }
             }
         }
@@ -133,14 +158,17 @@ namespace Flyiing_Hiigh
                 typeface = SKTypeface.FromStream(fontStream);
             }
 
+            byte alpha = (byte)(100 + 155 * scale);
             SKPaint textPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 Typeface = typeface,
-                Color = SKColors.White,
+                Color = SKColors.White.WithAlpha(alpha),
                 TextAlign = SKTextAlign.Right,
                 TextSize = 64
+                
             };
+            
             
             canvas.DrawText("tap Screen to start playing...", imageInfo.Width - 20, imageInfo.Height/6*5, textPaint);
                      
@@ -162,7 +190,22 @@ namespace Flyiing_Hiigh
             }
 
         }
-        
+
+        async Task AnimationLoop()
+        {
+            stopwatch.Start();
+
+            while (pageIsActive)
+            {
+                double cycleTime = 3;
+                double t = stopwatch.Elapsed.TotalSeconds % cycleTime / cycleTime;
+                scale = (1 + (float)Math.Sin(2 * Math.PI * t)) / 2;
+                canvasView.Invalidate();
+                await Task.Delay(TimeSpan.FromSeconds(1.0 / 30));
+            }
+
+            stopwatch.Stop();
+        }
 
     }
 }

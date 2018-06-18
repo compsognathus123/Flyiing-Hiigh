@@ -6,7 +6,9 @@ namespace Flyiing_Hiigh
 {
     public class ObjPlayer : GameObject
     {
-        double g = -400;
+        double g = -425;
+
+        public Boolean accelerating;
 
         ObjWeapon weapon;
         private float animationXOffset;
@@ -15,7 +17,7 @@ namespace Flyiing_Hiigh
         {
             this.setResourceID("Flyiing_Hiigh.Resources.Drawable.butterfly.png");
             this.rect = new SKRect(125, 200, 200, 275);
-            this.ySpeed = 0;
+            this.ySpeed = 100;
                        
         }
 
@@ -24,8 +26,19 @@ namespace Flyiing_Hiigh
             rect.Size = new SKSize(getWidth(), getHeight());
             rect.Location = new SKPoint(125, rect.Location.Y);
 
-            if ( ySpeed > -500) ySpeed += g * activity.getTickDurationMs() * Math.Pow(10, -3);
+            if ( ySpeed > -450) ySpeed += g * activity.getTickDurationMs() * Math.Pow(10, -3);
             float yOffset = (float)(ySpeed * activity.getTickDurationMs() * Math.Pow(10, -3));
+
+            if (accelerating && ySpeed < 450)
+            {
+                ySpeed += 3;
+            }
+
+            if(rect.Top < 0)
+            {
+                accelerating = false;
+                if (rect.Bottom < 0) ySpeed = -50;
+            }
 
             if (animationXOffset > 0)
             {
@@ -50,12 +63,18 @@ namespace Flyiing_Hiigh
    
         }
 
-        public void accelerate()
+        public void accelerate(Boolean accelerated)
         {
-            if(rect.Top > 0)
+            if(!accelerating && accelerated)
             {
-                ySpeed = 400;
+                if (rect.Top > 0)
+                {
+                    ySpeed = 275;
+                }
             }
+
+            accelerating = accelerated;
+
         }
 
         public void setWeapon(ObjWeapon weapon)

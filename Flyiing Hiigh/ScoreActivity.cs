@@ -42,6 +42,7 @@ namespace Flyiing_Hiigh
         public override void OnBackPressed()
         {
             Intent startActivityIntent = new Intent(this, typeof(StartActivity));
+            startActivityIntent.SetFlags(ActivityFlags.SingleTop);
             StartActivity(startActivityIntent);
         }
 

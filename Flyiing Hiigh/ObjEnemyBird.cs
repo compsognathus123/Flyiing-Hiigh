@@ -21,8 +21,28 @@ namespace Flyiing_Hiigh
                 
         int updown;
 
-        public ObjEnemyBird(Context context) : base(context, "Bird", 0.25f, 10)
+        int nth_bird;
+        SKPaint paint;
+
+        int shoot_period;
+
+        public ObjEnemyBird(Context context, int nth_bird) : base(context, "Bird", 0.25f, 10)
         {
+            paint = new SKPaint();
+            this.nth_bird = nth_bird;
+
+            if ((nth_bird * 750) <= 3000)
+            {
+                shoot_period = 3000 - (nth_bird * 750);
+
+               // paint.ColorFilter = SKColorFilter.CreateBlendMode(SKColors.Blue.WithAlpha(100), SKBlendMode.SrcATop);
+            }
+            else
+            {
+                shoot_period = 300;
+
+            }
+
             sprites = new SKBitmap[8];
             for (int i = 1; i < 8; i++)
             {
@@ -57,7 +77,7 @@ namespace Flyiing_Hiigh
                 {
                     isFighting = true;
                     xSpeed = 0;
-                    time_next_shot = activity.getTime() + 1000;
+                    time_next_shot = activity.getTime() + shoot_period;
                 }
             }
 
@@ -93,9 +113,10 @@ namespace Flyiing_Hiigh
 
         private void handleShooting()
         {
+
             if(isFighting && time_next_shot < activity.getTime() && !isDead())
             {
-                time_next_shot = activity.getTime() + 3000;
+                time_next_shot = activity.getTime() + shoot_period;
 
                 activity.RunOnUiThread(() =>
                 {
@@ -123,7 +144,7 @@ namespace Flyiing_Hiigh
                 SKPoint rotatePoint = new SKPoint(rect.MidX, rect.MidY);
 
                 canvas.RotateDegrees(deathAnimation, rotatePoint.X, rotatePoint.Y);
-                canvas.DrawBitmap(getBitmap(), getRectangle());
+                canvas.DrawBitmap(getBitmap(), getRectangle(), paint);
                 canvas.RotateDegrees(-deathAnimation, rotatePoint.X, rotatePoint.Y);
 
                 deathAnimation += 15;
@@ -131,7 +152,7 @@ namespace Flyiing_Hiigh
             }
             else
             {
-                canvas.DrawBitmap(sprites[resID], getRectangle());
+                canvas.DrawBitmap(sprites[resID], getRectangle(), paint);
 
                 //Draw health-bar
                 int separate = 20;
