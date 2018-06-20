@@ -30,7 +30,14 @@ namespace Flyiing_Hiigh
 
             activity = (GameActivity)context;
         }
-             
+        
+        protected void setAdaptedOffset(float x, float y)
+        {
+          
+            //getRatio()
+           // rect.Offset();
+        }
+          
         protected void setResourceID(String resourceID)
         {
             Assembly assembly = GetType().GetTypeInfo().Assembly;
